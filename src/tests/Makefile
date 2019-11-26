@@ -1,12 +1,20 @@
 CC = gcc
 FLAGS = -Wall -g
-OBJECTS = cutils.o
+OBJECTS = c_utils.o unit_tests.o arraylist.o
 
-test_merge: $(OBJECTS)
-	$(CC) $(FLAGS) $(OBJECTS) test_merge.c -o test_merge
+test_sort: $(OBJECTS)
+	$(CC) $(FLAGS) $(OBJECTS) test_sort.c -o test_sort
 
 
 
-cutils.o: ../cutils.c
-	$(CC) $(FLAGS) -c ../cutils.c -o cutils.o
+c_utils.o: ../c_utils.c
+	$(CC) $(FLAGS) -c ../c_utils.c -o c_utils.o
 
+unit_tests.o: ../unit_tests/unit_tests.c
+	$(CC) $(FLAGS) -c ../unit_tests/unit_tests.c -o unit_tests.o
+
+arraylist.o: ../structures/arraylist.c
+	$(CC) $(FLAGS) -c ../structures/arraylist.c -o arraylist.o
+
+nstring.o: ../structures/nstring.c
+	$(CC) $(FLAGS) -c ../structures/nstring.c -o ntring.o

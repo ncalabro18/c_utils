@@ -1,14 +1,6 @@
-#ifndef CUTILS_H
-#define CUTILS_H
-
-typedef enum Status{
-	FAILURE, SUCCESS
-} Status;
-
-typedef enum Boolean{
-	FALSE, TRUE
-} Boolean;
-
+#ifndef C_UTILS_H
+#define C_UTILS_H
+#include "util.h"
 
 int cusearch_linear_int(int *array, unsigned int arrayCount, int number);
 int cusearch_linear_uint(unsigned int *array, unsigned int arrayCount, unsigned int number);

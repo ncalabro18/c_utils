@@ -1,16 +1,16 @@
-#include "cutils.h"
+#include "c_utils.h"
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-#define CUTILS_SWAP_CODE(type, a, b)\
+#define CUSWAP_CODE(type, a, b)\
 	{type _temp = *a;\
 	*a = *b;\
 	*b = _temp;}
 
 //CUTILS_LINEAR_CODE refers to code that is the exact same for each linear seach function
-#define CUTILS_LINEAR_CODE(array, arrayCount, number)\
+#define CUSEARCH_LINEAR_CODE(array, arrayCount, number)\
 	{unsigned int i;\
 	if(!(array)) return -2;\
 	for(i = 0; i < (arrayCount); i++)\
@@ -18,10 +18,19 @@
 			return i;\
 	return -1;}
 
-#define CUTILS_BINARY_CODE(array, arrayCount, number)
+#define CUSEARCH_BINARY_CODE(array, arrayCount, number)
 
 
-#define CUTILS_BUBBLE_CODE(type, array, arrayCount)\
+#define CUSORT_SELECTION_CODE(type, array, arrayCount)\
+	for(unsigned int i = 0; i < arrayCount - 1; i++){\
+		unsigned int min = i;\
+		for(int j = i; j < arrayCount; j++)\
+			if(array[j] < array[min])\
+				min = j;\
+	}
+
+
+#define CUSORT_BUBBLE_CODE(type, array, arrayCount)\
 	{unsigned int swaps;\
 	unsigned int i;\
 	if(!(array)) return;\
@@ -29,7 +38,7 @@
 		swaps = 0;\
 		for(i = 0; i < (arrayCount) - 1; i++){\
 			if((array)[i] > (array)[i + 1]){\
-				CUTILS_SWAP_CODE(type, &array[i], &array[i + 1])\
+				CUSWAP_CODE(type, &array[i], &array[i + 1]);\
 				swaps = 1;\
 			}\
 		}\
@@ -40,15 +49,15 @@
 
 
 int cusearch_linear_int(int *array, unsigned int arrayCount, int number){
-	 CUTILS_LINEAR_CODE(array, arrayCount, number)
+	 CUSEARCH_LINEAR_CODE(array, arrayCount, number)
 }
 
 int cusearch_linear_uint(unsigned int *array, unsigned int arrayCount, unsigned int number){
-	 CUTILS_LINEAR_CODE(array, arrayCount, number)
+	 CUSEARCH_LINEAR_CODE(array, arrayCount, number)
 }
 
 int cusearch_linear_float(float *array, unsigned int arrayCount, float number){
-	 CUTILS_LINEAR_CODE(array, arrayCount, number)
+	 CUSEARCH_LINEAR_CODE(array, arrayCount, number)
 }
 
 int cusearch_binary_int(int *array, unsigned int arrayCount, int number);
@@ -58,21 +67,28 @@ int cusearch_binary_float(float *array, unsigned int arrayCount, float number);
 
 
 void cusort_bubble_int(int *array, unsigned int arrayCount){
-	 CUTILS_BUBBLE_CODE(int, array, arrayCount)	
+	 CUSORT_BUBBLE_CODE(int, array, arrayCount)	
 }
 
 void cusort_bubble_uint(unsigned int *array, unsigned int arrayCount){
-	 CUTILS_BUBBLE_CODE(unsigned int, array, arrayCount)
+	 CUSORT_BUBBLE_CODE(unsigned int, array, arrayCount)
 }
 
 void cusort_bubble_float(float *array, unsigned int arrayCount){
-	 CUTILS_BUBBLE_CODE(float, array, arrayCount)
+	 CUSORT_BUBBLE_CODE(float, array, arrayCount)
 }
 
 
-void cusort_selection_int(int *array, unsigned int arrayCount);
-void cusort_selection_uint(unsigned int *array, unsigned int arrayCount);
-void cusort_selection_float(float *array, unsigned int arrayCount);
+void cusort_selection_int(int *array, unsigned int arrayCount){
+	CUSORT_SELECTION_CODE(int, array, arrayCount);
+}
+void cusort_selection_uint(unsigned int *array, unsigned int arrayCount){
+	CUSORT_SELECTION_CODE(unsigned int, array, arrayCount);
+}
+void cusort_selection_float(float *array, unsigned int arrayCount){
+	CUSORT_SELECTION_CODE(float, array, arrayCount)
+}
+
 
 void cusort_merge_int_merge(int *array, unsigned int low, unsigned int mid, unsigned int high){
 	if(low + 1 < high){
@@ -118,13 +134,13 @@ void cusort_merge_float(float *array, unsigned int arrayCount);
 
 
 void cuswap_int(int *a, int *b){
-	CUTILS_SWAP_CODE(int,a,b)
+	CUSWAP_CODE(int,a,b)
 }
 void cuswap_uint(unsigned int *a, unsigned int *b){
-	CUTILS_SWAP_CODE(unsigned int,a,b)
+	CUSWAP_CODE(unsigned int,a,b)
 }
 void cuswap_float(float *a, float *b){
-	CUTILS_SWAP_CODE(float,a,b)
+	CUSWAP_CODE(float,a,b)
 }
 
 Boolean cucmp_float(float a, float b){
