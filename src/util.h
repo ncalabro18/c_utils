@@ -1,3 +1,4 @@
+//This header is for c_utils types
 #ifndef UTIL_H
 #define UTIL_H
 
@@ -20,6 +21,7 @@ typedef enum _status {
 }Status;
 
 
+//boolean enum
 typedef enum _boolean {
 	FALSE = 0, TRUE = 1
 } Boolean;

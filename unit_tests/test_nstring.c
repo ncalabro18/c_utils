@@ -3,6 +3,7 @@
 #include <string.h>
 
 
+
 Status testCase_nstr_cmp(const char *a, const char *b){
     NString str1 = nstr_initialize_cstr(a);
     NString str2 = nstr_initialize_cstr(b);
@@ -50,7 +51,7 @@ Status testCase_nstr_concat(const char *a, const char *b){
     return SUCCESS;
 }
 
-Status test_cmp(TEST_FUNCTION_PARAMETERS){
+Status test_cmp(char *buffer, unsigned int length){
 
     if(!testCase_nstr_cmp("","")) return FAILURE;
     if(!testCase_nstr_cmp("hello, world","hello, world")) return FAILURE;
@@ -67,7 +68,7 @@ Status test_cmp(TEST_FUNCTION_PARAMETERS){
 }
 
 
-Status test_substring(TEST_FUNCTION_PARAMETERS){
+Status test_substring(char *buffer, unsigned int length){
 
     if(!testCase_nstr_substring("", 5, 7)) return FAILURE;
     if(!testCase_nstr_substring("hello, world", 3, 6)) return FAILURE;
@@ -88,7 +89,7 @@ Status test_substring(TEST_FUNCTION_PARAMETERS){
     return SUCCESS;
 }
 
-Status test_concat(TEST_FUNCTION_PARAMETERS){
+Status test_concat(char *buffer, unsigned int length){
 
     if(!testCase_nstr_concat("","")) return FAILURE;
     if(!testCase_nstr_concat("hello, world","hello, world")) return FAILURE;
