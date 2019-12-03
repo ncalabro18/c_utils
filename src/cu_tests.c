@@ -1,28 +1,28 @@
 #include "cu_tests.h"
 #include <stdlib.h>
 
-#define cast(x) ((struct unit_tests*)(x))
-#define ERROR_BUFFER_LENGTH 1028
-#define INITIAL_FUNCTION_CAPACITY 8
-#define UT_VERSION 0.30
+#define cast(x) ((struct CU_TESTS*)(x))
+#define CU_TESTS_ERROR_BUFFER_LENGTH 1028
+#define CU_TESTS_INITIAL_FUNCTION_CAPACITY 8
+#define CU_TESTS_VERSION 0.30
 
 
-typedef struct unit_tests{
+typedef struct CU_TESTS{
 	FILE *output;
-	ArrayList functions;
+	CUArrayList functions;
 	char *errorMessage;
 	Boolean initError;
 
-	//contains all the indices of the tests that failed after ut_test run
-	ArrayList results;
-} unit_tests;
+	//contains all the indices of the tests that failed after cu_tests_test run
+	CUArrayList results;
+} CU_TESTS;
 
 
-UnitTests ut_init(){
-	struct unit_tests *ut = (struct unit_tests*) malloc(sizeof(unit_tests));
+CUTests cu_tests_init(){
+	CU_TESTS *ut = (struct CU_TESTS*) malloc(sizeof(CU_TESTS));
 	if(!ut) return NULL;
 
-	ut->errorMessage = calloc(sizeof(char), ERROR_BUFFER_LENGTH);
+	ut->errorMessage = calloc(sizeof(char), CU_TESTS_ERROR_BUFFER_LENGTH);
 	if(!ut->errorMessage){
 		free(ut);
 		return NULL;
@@ -36,7 +36,7 @@ UnitTests ut_init(){
 		return NULL;
 	}
 
-	ut->functions = cu_arraylist_init(sizeof(Status (*)(char *, unsigned int)), INITIAL_FUNCTION_CAPACITY);
+	ut->functions = cu_arraylist_init(sizeof(Status (*)(char *, unsigned int)), CU_TESTS_INITIAL_FUNCTION_CAPACITY);
 	if(!ut->functions){
         cu_arraylist_destroy(&ut->results);
 		free(ut->errorMessage);
@@ -51,14 +51,14 @@ UnitTests ut_init(){
 }
 	
 
-void ut_setOutput(UnitTests ut, FILE* file){
+void cu_tests_setOutput(CUTests ut, FILE* file){
 	if(!ut || !file) return;
 
 	cast(ut)->output = file;
 }
 
 
-void ut_addTest(UnitTests ut, Status(*function)(char*,unsigned int)){
+void cu_tests_addTest(CUTests ut, Status(*function)(char*, unsigned int)){
 	if(!ut || !function || cast(ut)->initError == TRUE)
 		return;
 	
@@ -70,18 +70,18 @@ void ut_addTest(UnitTests ut, Status(*function)(char*,unsigned int)){
 	cast(ut)->initError = FALSE;
 }
 		
-Status ut_test(UnitTests unitTests){
-	struct unit_tests *ut = cast(unitTests);
+Status cu_tests_test(CUTests t){
+	struct CU_TESTS *ut = cast(t);
 	if(!ut){
-		fprintf(stderr, "Unitests passed as NULL\n");
+		fprintf(stderr, "CUTests passed as NULL\n");
 		return FAILURE;
 	}
 
 	if(ut->initError){
-		fprintf(stderr, "Unitests initialization error");
+		fprintf(stderr, "CUTests initialization error\n");
 		return FAILURE;
 	}
-    cu_arraylist_clear(ut->results);
+    	cu_arraylist_clear(ut->results);
 
 	int funcCount = cu_arraylist_size(ut->functions);
 	Status(**functions)(char*, unsigned int) = (Status(**)(char*, unsigned int)) cu_arraylist_viewRaw(ut->functions);
@@ -91,23 +91,30 @@ Status ut_test(UnitTests unitTests){
 		return FAILURE;
 	}
 
-	fprintf(ut->output, "\nUnit Tests Version %.2f\n", UT_VERSION);
+
+
+
+	fprintf(ut->output, "\nCUTests Version %.2f\n", CU_TESTS_VERSION);
 	fprintf(ut->output, "Beginning %d tests...\n", funcCount);
 	int failed = 0;
 	for(int i = 0; i < funcCount; i++){
 		//gets and casts the function
 		//runs the function and tests for errors
-		Status result =  functions[i](ut->errorMessage, ERROR_BUFFER_LENGTH);
+		Status result =  functions[i](ut->errorMessage, CU_TESTS_ERROR_BUFFER_LENGTH);
 
 		if(cu_arraylist_append(ut->results, (byte *) &result) == FAILURE)
 			return FAILURE;
 		if(result == FAILURE){
-			fprintf(ut->output, "\tTest %d failed...\n", i);
+			fprintf(ut->output, "\tTest %d failed\n", i);
+			if(ut->errorMessage[0] == '\0')
+				fprintf(ut->output, "\tNo error message");
 			fprintf(ut->output, "\t%s\n", ut->errorMessage);
-			fprintf(ut->output, "...continuing...\n");
+			fprintf(ut->output, "\tcontinuing...\n");
 			failed++;
 		}
 	}
+
+	if(failed == 0) fputc('\n', ut->output);
 
 	fprintf(ut->output, "...%d/%d tests passed.\n\n",  funcCount - failed, funcCount);
 
@@ -117,20 +124,19 @@ Status ut_test(UnitTests unitTests){
 	return FAILURE;
 }
 
-ArrayList ut_results(UnitTests ut){
-	if(!ut) 
+CUArrayList cu_tests_results(CUTests t){
+	if(!t)
 		return NULL;
-	return cast(ut)->results;
-	
+	return cast(t)->results;
 }
 
-void ut_destroy(UnitTests* p_ut){
-	if(!p_ut || !*p_ut)
+void cu_tests_destroy(CUTests* pt){
+	if(!pt || !*pt)
 		return;
 
-    cu_arraylist_destroy(&cast(*p_ut)->results);
-	free(cast(*p_ut)->errorMessage);
-    cu_arraylist_destroy(&cast(*p_ut)->functions);
-	*p_ut = NULL;
+    cu_arraylist_destroy(&cast(*pt)->results);
+	free(cast(*pt)->errorMessage);
+    cu_arraylist_destroy(&cast(*pt)->functions);
+	*pt = NULL;
 }
 

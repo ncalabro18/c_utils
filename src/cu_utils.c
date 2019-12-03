@@ -1,9 +1,11 @@
 #include "cu_utils.h"
 
+
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
 
 
 //macros to reuse code for different types (who needs templates)
@@ -81,51 +83,16 @@ struct cu_globals{
 
 
 
-int* cumake_randomArray_int(unsigned int arrayCount, int max){
-	if(arrayCount == 0) return NULL;
-
-	int* array = (int*) malloc(sizeof(int) * arrayCount);
-	if(!array) return NULL;
-
-	srand(time(0));
-	for(int i = 0; i < arrayCount; i++)
-		array[i] = rand() % max;
-
-	return array;
-}
-
-unsigned int* cumake_randomArray_uint(unsigned int arrayCount, unsigned int max){
-	if(arrayCount == 0) return NULL;
-
-	unsigned int *array = malloc(sizeof(unsigned int) * arrayCount);
-	if(!array) return NULL;
-
-	srand(time(0));
-	for(int i = 0; i < arrayCount; i++)
-		array[i] = (unsigned int) rand() % max;
-
-	return array;
-}
-
-float* cumake_randomArray_float(unsigned int arrayCount, float max){
-	if(arrayCount == 0) return NULL;
-
-	float *array = malloc(sizeof(float) * arrayCount);
-	if(!array) return NULL;
-
-	srand(time(0));
-	for(int i = 0; i < arrayCount; i++)
-		array[i] = max * (float) (rand() / RAND_MAX);
-
-	return array;
-}
-
-
-
 int cusearch_linear_int(int *array, unsigned int arrayCount, int number){
 	CUSEARCH_LINEAR_CODE(array, arrayCount, number)
 }
 int cusearch_linear_uint(unsigned int *array, unsigned int arrayCount, unsigned int number){
+	CUSEARCH_LINEAR_CODE(array, arrayCount, number)
+}
+int cusearch_linear_char(char *array, unsigned int arrayCount, int number){
+	CUSEARCH_LINEAR_CODE(array, arrayCount, number)
+}
+int cusearch_linear_uchar(unsigned char*array, unsigned int arrayCount, int number){
 	CUSEARCH_LINEAR_CODE(array, arrayCount, number)
 }
 int cusearch_linear_short(short *array, unsigned int arrayCount, short number){
@@ -181,25 +148,73 @@ int cusearch_binary_ldouble(long double *array, unsigned int arrayCount, long do
 }
 
 
-
 void cusort_bubble_int(int *array, unsigned int arrayCount){
 	 CUSORT_BUBBLE_CODE(int, array, arrayCount)	
 }
 void cusort_bubble_uint(unsigned int *array, unsigned int arrayCount){
 	 CUSORT_BUBBLE_CODE(unsigned int, array, arrayCount)
 }
-
+void cusort_bubble_char(char *array, unsigned int arrayCount){
+	 CUSORT_BUBBLE_CODE(char, array, arrayCount)
+}
+void cusort_bubble_uchar(unsigned char *array, unsigned int arrayCount){
+	 CUSORT_BUBBLE_CODE(unsigned char, array, arrayCount)
+}
+void cusort_bubble_short(short *array, unsigned int arrayCount){
+	 CUSORT_BUBBLE_CODE(short, array, arrayCount)
+}
+void cusort_bubble_ushort(unsigned short *array, unsigned int arrayCount){
+	 CUSORT_BUBBLE_CODE(unsigned short, array, arrayCount)
+}
+void cusort_bubble_long(long *array, unsigned int arrayCount){
+	 CUSORT_BUBBLE_CODE(long, array, arrayCount)
+}
+void cusort_bubble_ulong(unsigned long *array, unsigned int arrayCount){
+	 CUSORT_BUBBLE_CODE(unsigned long, array, arrayCount)
+}
 void cusort_bubble_float(float *array, unsigned int arrayCount){
 	 CUSORT_BUBBLE_CODE(float, array, arrayCount)
 }
+void cusort_bubble_double(double *array, unsigned int arrayCount){
+	 CUSORT_BUBBLE_CODE(double, array, arrayCount)
+}
+void cusort_bubble_ldouble(long double *array, unsigned int arrayCount){
+	 CUSORT_BUBBLE_CODE(long double, array, arrayCount)
+}
+
+
 void cusort_selection_int(int *array, unsigned int arrayCount){
 	CUSORT_SELECTION_CODE(int, array, arrayCount);
 }
 void cusort_selection_uint(unsigned int *array, unsigned int arrayCount){
 	CUSORT_SELECTION_CODE(unsigned int, array, arrayCount);
 }
+void cusort_selection_char(char *array, unsigned int arrayCount){
+	CUSORT_SELECTION_CODE(char, array, arrayCount);
+}
+void cusort_selection_uchar(unsigned char *array, unsigned int arrayCount){
+	CUSORT_SELECTION_CODE(unsigned char, array, arrayCount);
+}
+void cusort_selection_short(short *array, unsigned int arrayCount){
+	CUSORT_SELECTION_CODE(short, array, arrayCount);
+}
+void cusort_selection_ushort(unsigned short *array, unsigned int arrayCount){
+	CUSORT_SELECTION_CODE(unsigned short, array, arrayCount);
+}
+void cusort_selection_long(long *array, unsigned int arrayCount){
+	CUSORT_SELECTION_CODE(long, array, arrayCount);
+}
+void cusort_selection_ulong(unsigned long*array, unsigned int arrayCount){
+	CUSORT_SELECTION_CODE(unsigned long, array, arrayCount);
+}
 void cusort_selection_float(float *array, unsigned int arrayCount){
-	CUSORT_SELECTION_CODE(float, array, arrayCount)
+	CUSORT_SELECTION_CODE(float, array, arrayCount);
+}
+void cusort_selection_double(double *array, unsigned int arrayCount){
+	CUSORT_SELECTION_CODE(double, array, arrayCount);
+}
+void cusort_selection_ldouble(long double *array, unsigned int arrayCount){
+	CUSORT_SELECTION_CODE(long double, array, arrayCount);
 }
 
 
@@ -241,6 +256,18 @@ void cusort_merge_int(int *array, unsigned int arrayCount){
 	cusort_merge_int_merge(array, 0, arrayCount / 2, arrayCount);
 }
 
+/*
+void cusort_merge_uint(unsigned int *array, unsigned int arrayCount);
+void cusort_merge_char(char *array, unsigned int arrayCount);
+void cusort_merge_uchar(unsigned char *array, unsigned int arrayCount);
+void cusort_merge_short(short *array, unsigned int arrayCount);
+void cusort_merge_ushort(unsigned short *array, unsigned int arrayCount);
+void cusort_merge_long(long *array, unsigned int arrayCount);
+void cusort_merge_ulong(unsigned logn*array, unsigned int arrayCount);
+void cusort_merge_float(float *array, unsigned int arrayCount);
+void cusort_merge_double(double *array, unsigned int arrayCount);
+void cusort_merge_ldouble(long double *array, unsigned int arrayCount);
+*/
 
 
 void cuswap_int(int *a, int *b){
@@ -248,6 +275,12 @@ void cuswap_int(int *a, int *b){
 }
 void cuswap_uint(unsigned int *a, unsigned int *b){
 	CUSWAP_CODE(unsigned int,a,b)
+}
+void cuswap_char(char *a, char *b){
+	CUSWAP_CODE(char,a,b)
+}
+void cuswap_uchar(unsigned char *a, unsigned char *b){
+	CUSWAP_CODE(unsigned char,a,b)
 }
 void cuswap_short(short *a, short *b){
 	CUSWAP_CODE(short,a,b)
@@ -272,6 +305,7 @@ void cuswap_ldouble(long double *a, long double *b){
 }
 
 
+
 void cuprint_setOutput(FILE *filePtr){
 	_cu_globals.cuprint_output = filePtr;
 }
@@ -280,6 +314,12 @@ void cuprint_array_int(int *array, unsigned int arrayCount){
 }
 void cuprint_array_uint(unsigned int *array, unsigned int arrayCount){
 	CUPRINT_ARRAY_CODE(unsigned int, array, arrayCount, "%u ")
+}
+void cuprint_array_char(char *array, unsigned int arrayCount){
+	CUPRINT_ARRAY_CODE(char, array, arrayCount, "%c ")
+}
+void cuprint_array_uchar(unsigned char *array, unsigned int arrayCount){
+	CUPRINT_ARRAY_CODE(unsigned char, array, arrayCount, "%d ")
 }
 void cuprint_array_short(short *array, unsigned int arrayCount){
 	CUPRINT_ARRAY_CODE(short, array, arrayCount, "%d ")

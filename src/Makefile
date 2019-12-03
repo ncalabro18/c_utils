@@ -1,25 +1,33 @@
 CC = gcc
 FLAGS = -Wall -g -Wno-unused-function
-OBJECTS = cu_utils.o unit_tests.o arraylist.o queue.o
-LIB =  cu_utils.a
+OBJECTS = cu_utils.o cu_arraylist.o cu_string.o cu_queue.o cu_stack.o cu_tests.o
+LIB =  libcu_utils.a
 
-cu_utils.a: $(OBJECTS)
+
+$(LIB): $(OBJECTS)
 	ar -cvq $(LIB) $(OBJECTS)
+
 
 cu_utils.o: cu_utils.c
 	$(CC) $(FLAGS) -c cu_utils.c -o cu_utils.o
 
-unit_tests.o: unit_tests/unit_tests.c
-	$(CC) $(FLAGS) -c unit_tests/unit_tests.c -o unit_tests.o
+cu_tests.o: cu_tests.c
+	$(CC) $(FLAGS) -c cu_tests.c -o cu_tests.o
 
-arraylist.o: structures/arraylist.c
-	$(CC) $(FLAGS) -c structures/arraylist.c -o arraylist.o
+cu_arraylist.o: structures/cu_arraylist.c
+	$(CC) $(FLAGS) -c structures/cu_arraylist.c -o cu_arraylist.o
 
-nstring.o: structures/nstring.c
-	$(CC) $(FLAGS) -c structures/nstring.c -o ntring.o
+cu_string.o: structures/cu_string.c
+	$(CC) $(FLAGS) -c structures/cu_string.c -o cu_string.o
 
-queue.o: structures/queue.c
-	$(CC) $(FLAGS) -c structures/queue.c -o queue.o
+cu_queue.o: structures/cu_queue.c
+	$(CC) $(FLAGS) -c structures/cu_queue.c -o cu_queue.o
+
+cu_stack.o: structures/cu_stack.c
+	$(CC) $(FLAGS) -c structures/cu_stack.c -o cu_stack.o
 
 clean:
+	rm $(OBJECTS) $(LIB)
+
+rmo:
 	rm $(OBJECTS)

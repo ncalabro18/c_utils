@@ -3,7 +3,7 @@
 #include <string.h>
 
 
-#define cast(x) ((_queue*)(x))
+#define cast(x) ((CU_QUEUE*)(x))
 
 typedef struct Node{
 	struct Node* next;	
@@ -12,17 +12,18 @@ typedef struct Node{
 
 Node* createNode(byte* data, unsigned int itemSize);
 
-typedef struct _queue{
+typedef struct CU_QUEUE{
 	unsigned int itemCount;
 	unsigned int itemSize;
 	Node *head;
 	Node *tail;
-}_queue;
+} CU_QUEUE;
 
 
 
-Queue cu_queue_initialize(unsigned int bytesPerItem){
-	_queue *q = (_queue*) malloc(sizeof(_queue));
+
+CUQueue cu_queue_initialize(unsigned int bytesPerItem){
+	CU_QUEUE *q = (CU_QUEUE*) malloc(sizeof(CU_QUEUE));
 	if(!q) return NULL;
 	
 	q->itemCount = 0;
@@ -33,7 +34,7 @@ Queue cu_queue_initialize(unsigned int bytesPerItem){
 	return q;
 }
 
-Status cu_queue_push(Queue q, byte* data){
+Status cu_queue_push(CUQueue q, byte* data){
 	if(!q || !data) return FAILURE;	
 
 
@@ -52,14 +53,14 @@ Status cu_queue_push(Queue q, byte* data){
 }
 
 
-byte*  cu_queue_peek(Queue q){
+byte*  cu_queue_peek(CUQueue q){
 	if(!q) return NULL;
 
 	return cast(q)->tail->data;
 }
 
 
-Status cu_queue_pop(Queue q){
+Status cu_queue_pop(CUQueue q){
 	if(!q) return FAILURE;
 	
 	if(cast(q)->tail == NULL) return FAILURE;
@@ -75,14 +76,14 @@ Status cu_queue_pop(Queue q){
 }
 
 
-int cu_queue_size(Queue q){
+int cu_queue_size(CUQueue q){
 	if(!q) return -1;
 
 	return cast(q)->itemCount;
 }
 
 
-Status cu_queue_clear(Queue q){
+Status cu_queue_clear(CUQueue q){
 	if(!q) return FAILURE;
 
 	while(cu_queue_pop(q) != FAILURE);
@@ -92,7 +93,7 @@ Status cu_queue_clear(Queue q){
 }
 
 
-void cu_queue_destroy(Queue* q){
+void cu_queue_destroy(CUQueue* q){
 	if(!q || !*q) return;
 	
 	while(cu_queue_pop(*q) != FAILURE);
@@ -106,14 +107,14 @@ void cu_queue_destroy(Queue* q){
 
 
 Node* createNode(byte* data, unsigned int itemSize){
-	Node * n = malloc(sizeof(Node) + itemSize);
+	Node *n = malloc(sizeof(Node) + itemSize);
 	if(!n) return NULL;
 
 	n->next = NULL;
 	//uses one malloc to allocate both the Node and the Node data
 	//the data always points at the end of the Node,
-	//(the cast is to prevent pointer arithmatic from using 4/8 byte increments instead of 1)
-	n->data = ((byte*)n) + sizeof(Node);
+	//(the cast is to prevent pointer arithmetic from using 4/8 byte increments instead of 1)
+	n->data = (byte*) n + 1;
 
 	memcpy(n->data, data, itemSize);
 

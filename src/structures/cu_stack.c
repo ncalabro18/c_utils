@@ -1,17 +1,18 @@
 #include "cu_stack.h"
 #include "cu_arraylist.h"
-#include "stdlib.h"
 
-#define cast(x) ((STACK*)(x))
+#include <stdlib.h>
 
-
-typedef struct _stack {
-	ArrayList list;
-}STACK;
+#define cast(x) ((CU_STACK*)(x))
 
 
-Stack cu_stack_init(unsigned int bytesPer, unsigned int initialCapacity) {
-	STACK *stack = (STACK*)malloc(sizeof(STACK));
+typedef struct CU_STACK {
+	CUArrayList list;
+}CU_STACK;
+
+
+CUStack cu_stack_init(unsigned int bytesPer, unsigned int initialCapacity) {
+	CU_STACK *stack = (CU_STACK*)malloc(sizeof(CU_STACK));
 	if (stack == NULL)
 		return NULL;
 
@@ -21,30 +22,23 @@ Stack cu_stack_init(unsigned int bytesPer, unsigned int initialCapacity) {
 		return NULL;
 	}
 
-	return (Stack)stack;
+	return (CUStack)stack;
 }
 
-byte* cu_stack_pop(Stack stack) {
+Status cu_stack_pop(CUStack stack) {
 	if(stack == NULL || cu_arraylist_isEmpty(cast(stack)->list))
-		return NULL;
+		return FAILURE;
 	
 	int index = cu_arraylist_size(cast(stack)->list) - 1;
 	
-	if (index < 0)
-		return NULL;
 	
-	byte *item = cu_arraylist_get(cast(stack)->list, index);
-	
-	if (item == NULL)
-		return NULL;
-	
-	if ( !cu_arraylist_remove(cast(stack)->list, index) )
-		return NULL;
+	if (cu_arraylist_remove(cast(stack)->list, index) == FAILURE)
+		return FAILURE;
 
-	return item;
+	return SUCCESS;
 }
 
-Status cu_stack_push(Stack stack, byte *item) {
+Status cu_stack_push(CUStack stack, byte *item) {
 	if (stack == NULL)
 		return FAILURE;
 
@@ -52,7 +46,7 @@ Status cu_stack_push(Stack stack, byte *item) {
 }
 
 
-byte* cu_stack_peek(Stack stack) {
+byte* cu_stack_peek(CUStack stack) {
 	if (stack == NULL)
 		return NULL;
 	int index = cu_arraylist_size(cast(stack)->list) - 1;
@@ -64,28 +58,28 @@ byte* cu_stack_peek(Stack stack) {
 }
 
 
-Status cu_stack_clear(Stack stack) {
+Status cu_stack_clear(CUStack stack) {
 	if (stack == NULL)
 		return FAILURE;
 	return cu_arraylist_clear(cast(stack)->list);
 }
 
 
-int cu_stack_size(Stack stack) {
+int cu_stack_size(CUStack stack) {
 	if (stack == NULL)
 		return -3;
 	return cu_arraylist_size(cast(stack)->list);
 }
 
 
-Boolean cu_stack_isEmpty(Stack stack) {
+Boolean cu_stack_isEmpty(CUStack stack) {
 	if (stack == NULL)
 		return TRUE;
 	return cu_arraylist_isEmpty(cast(stack)->list);
 }
 
 
-void cu_stack_destroy(Stack *stack) {
+void cu_stack_destroy(CUStack *stack) {
 	if (stack == NULL || *stack == NULL)
 		return;
     cu_arraylist_destroy(cast(*stack)->list);

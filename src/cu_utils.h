@@ -6,21 +6,15 @@
 #include "structures/cu_string.h"
 #include "structures/cu_stack.h"
 #include "structures/cu_queue.h"
-
 #include <stdio.h>
-
-
-//creates random arrays for the specified datatype with arrayCount
-//if return value is non-null, the pointer is dynamic and must be deallocated w/ free()
-int*          cumake_randomArray_int(unsigned int arrayCount, int max);
-unsigned int* cumake_randomArray_uint(unsigned int arrayCount, unsigned int max);
-float*        cumake_randomArray_float(unsigned int arrayCount, float max);
 
 
 //returns the first occurence of the number in the array of length arrayCount
 //returns a negative value if number was not found
 int cusearch_linear_int(int *array, unsigned int arrayCount, int number);
 int cusearch_linear_uint(unsigned int *array, unsigned int arrayCount, unsigned int number);
+int cusearch_linear_char(char *array, unsigned int arrayCount, int number);
+int cusearch_linear_uchar(unsigned char*array, unsigned int arrayCount, int number);
 int cusearch_linear_short(short *array, unsigned int arrayCount, short number);
 int cusearch_linear_ushort(unsigned short *array, unsigned int arrayCount, unsigned short number);
 int cusearch_linear_long(long *array, unsigned int arrayCount, long number);
@@ -30,9 +24,10 @@ int cusearch_linear_double(double *array, unsigned int arrayCount, double number
 int cusearch_linear_ldouble(long double *array, unsigned int arrayCount, long double number);
 
 
-//given a sorted array,
 int cusearch_binary_int(int *array, unsigned int arrayCount, int number);
 int cusearch_binary_uint(unsigned int *array, unsigned int arrayCount, unsigned int number);
+int cusearch_binary_char(char *array, unsigned int arrayCount, char number);
+int cusearch_binary_uchar(unsigned char *array, unsigned int arrayCount, unsigned char number);
 int cusearch_binary_short(short *array, unsigned int arrayCount, short number);
 int cusearch_binary_ushort(unsigned short *array, unsigned int arrayCount, unsigned short number);
 int cusearch_binary_long(long *array, unsigned int arrayCount, long number);
@@ -43,17 +38,47 @@ int cusearch_binary_ldouble(long double *array, unsigned int arrayCount, long do
 
 void cusort_bubble_int(int *array, unsigned int arrayCount);
 void cusort_bubble_uint(unsigned int *array, unsigned int arrayCount);
+void cusort_bubble_char(char *array, unsigned int arrayCount);
+void cusort_bubble_uchar(unsigned char *array, unsigned int arrayCount);
+void cusort_bubble_short(short *array, unsigned int arrayCount);
+void cusort_bubble_ushort(unsigned short *array, unsigned int arrayCount);
+void cusort_bubble_long(long *array, unsigned int arrayCount);
+void cusort_bubble_ulong(unsigned long*array, unsigned int arrayCount);
 void cusort_bubble_float(float *array, unsigned int arrayCount);
+void cusort_bubble_double(double *array, unsigned int arrayCount);
+void cusort_bubble_ldouble(long double *array, unsigned int arrayCount);
 
 void cusort_selection_int(int *array, unsigned int arrayCount);
 void cusort_selection_uint(unsigned int *array, unsigned int arrayCount);
+void cusort_selection_char(char *array, unsigned int arrayCount);
+void cusort_selection_uchar(unsigned char *array, unsigned int arrayCount);
+void cusort_selection_short(short *array, unsigned int arrayCount);
+void cusort_selection_ushort(unsigned short *array, unsigned int arrayCount);
+void cusort_selection_long(long *array, unsigned int arrayCount);
+void cusort_selection_ulong(unsigned long *array, unsigned int arrayCount);
 void cusort_selection_float(float *array, unsigned int arrayCount);
+void cusort_selection_double(double *array, unsigned int arrayCount);
+void cusort_selection_ldouble(long double *array, unsigned int arrayCount);
 
 void cusort_merge_int(int *array, unsigned int arrayCount);
+/*
+void cusort_merge_uint(unsigned int *array, unsigned int arrayCount);
+void cusort_merge_char(char *array, unsigned int arrayCount);
+void cusort_merge_uchar(unsigned char *array, unsigned int arrayCount);
+void cusort_merge_short(short *array, unsigned int arrayCount);
+void cusort_merge_ushort(unsigned short *array, unsigned int arrayCount);
+void cusort_merge_long(long *array, unsigned int arrayCount);
+void cusort_merge_ulong(unsigned logn*array, unsigned int arrayCount);
+void cusort_merge_float(float *array, unsigned int arrayCount);
+void cusort_merge_double(double *array, unsigned int arrayCount);
+void cusort_merge_ldouble(long double *array, unsigned int arrayCount);
+*/
 
 //swaps the values at the pointers a and b
 void cuswap_int(int *a, int *b);
 void cuswap_uint(unsigned int *a, unsigned int *b);
+void cuswap_char(char *a, char *b);
+void cuswap_uchar(unsigned char *a, unsigned char *b);
 void cuswap_short(short *a, short *b);
 void cuswap_ushort(unsigned short *a, unsigned short *b);
 void cuswap_long(long *a, long *b);
@@ -68,6 +93,8 @@ void cuprint_setOutput(FILE*);
 //prints the given array
 void cuprint_array_int(int *array, unsigned int arrayCount);
 void cuprint_array_uint(unsigned int *array, unsigned int arrayCount);
+void cuprint_array_char(char *array, unsigned int arrayCount);
+void cuprint_array_uchar(unsigned char *array, unsigned int arrayCount);
 void cuprint_array_short(short *array, unsigned int arrayCount);
 void cuprint_array_ushort(unsigned short *array, unsigned int arrayCount);
 void cuprint_array_long(long *array, unsigned int arrayCount);

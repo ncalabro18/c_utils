@@ -6,20 +6,20 @@ Status testfunc_queue(char *, unsigned int);
 
 int main(void){
 
-	UnitTests unit = ut_init();
+	CUTests unit = cu_tests_init();
 
-	ut_addTest(unit, testfunc_queue);
+    cu_tests_addTest(unit, testfunc_queue);
 
-	ut_test(unit);
+    cu_tests_test(unit);
 
-	ut_destroy(&unit);
+    cu_tests_destroy(&unit);
 	
 
 	return 0;
 }
 
 Status testfunc_queue(char *buffer, unsigned int length){
-	Queue q = cu_queue_initialize(sizeof(int));
+	CUQueue q = cu_queue_initialize(sizeof(int));
 	if(!q) return FAILURE;
 
 	

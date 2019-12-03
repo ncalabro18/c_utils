@@ -1,33 +1,28 @@
 CC = gcc
-FLAGS = -Wall -g
-OBJECTS = c_utils.o unit_tests.o arraylist.o queue.o
-TESTS = test_sort test_nstring test_queue
+FLAGS = -Wall -g -I../src libcu_utils.a
+LINK = libcu_utils.a
+TESTS = test_sort test_queue test_string test_arraylist test_stack
 
+test_sort: test_sort.c libcu_utils.a
+	$(CC) $(FLAGS) test_sort.c -o test_sort $(LINK)
 
-test_sort: $(OBJECTS) test_sort.c
-	$(CC) $(FLAGS) $(OBJECTS) test_sort.c -o test_sort
+test_stack: test_stack.c libcu_utils.a
+	$(CC) $(FLAGS) test_stack.c -o test_stack $(LINK)
 
-test_nstring: $(OBJECTS) test_nstring.c
-	$(CC) $(FLAGS) $(OBJECTS) test_nstring.c -o test_nstring
+test_queue: test_queue.c libcu_utils.a
+	$(CC) $(FLAGS) test_queue.c -o test_queue $(LINK)
 
-test_queue: $(OBJECTS) test_queue.c
-	$(CC) $(FLAGS) $(OBJECTS) test_queue.c -o test_queue
+test_string: test_string.c libcu_utils.a
+	$(CC) $(FLAGS) test_string.c -o test_string $(LINK)
 
+test_arraylist: test_arraylist.c libcu_utils.a
+	$(CC) $(FLAGS) test_arraylist.c -o test_arraylist $(LINK)
 
-c_utils.o: ../c_utils.c
-	$(CC) $(FLAGS) -c ../c_utils.c -o c_utils.o
+../src/libcu_utils.a:
+	cd ../src && make libcu_utils.a && make clean
+libcu_utils.a:
+	cp ../src/libcu_utils.a libcu_utils.a 
 
-unit_tests.o: ../unit_tests/unit_tests.c
-	$(CC) $(FLAGS) -c ../unit_tests/unit_tests.c -o unit_tests.o
-
-arraylist.o: ../structures/arraylist.c
-	$(CC) $(FLAGS) -c ../structures/arraylist.c -o arraylist.o
-
-nstring.o: ../structures/nstring.c
-	$(CC) $(FLAGS) -c ../structures/nstring.c -o ntring.o
-
-queue.o: ../structures/queue.c
-	$(CC) $(FLAGS) -c ../structures/queue.c -o queue.o
 
 clean:
-	rm $(OBJECTS) $(TESTS)
+	rm $(TESTS) libcu_utils.a

@@ -14,7 +14,7 @@ typedef struct arraylist {
 #define RESIZE_MODIFIER 2
 Status cu_arraylist__resize(ARRAYLIST *list, unsigned int newItemCapacity);
 
-ArrayList cu_arraylist_init(unsigned int bytesPerItem, unsigned int initialItemCapacity) {
+CUArrayList cu_arraylist_init(unsigned int bytesPerItem, unsigned int initialItemCapacity) {
 	ARRAYLIST *list = (ARRAYLIST*)malloc(sizeof(ARRAYLIST));
 	if (list == NULL)
 		return NULL;
@@ -30,18 +30,18 @@ ArrayList cu_arraylist_init(unsigned int bytesPerItem, unsigned int initialItemC
 	list->itemCapacity = initialItemCapacity;
 	list->itemCount = 0;
 
-	return (ArrayList) list;
+	return (CUArrayList) list;
 }
 
 
-byte* cu_arraylist_get(ArrayList list, unsigned int index) {
+byte* cu_arraylist_get(CUArrayList list, unsigned int index) {
 	if (list == NULL)
 		return NULL;
 	
 	return &(cast(list)->data[ index * cast(list)->bytesPerItem ]);
 }
 
-Status cu_arraylist_set(ArrayList list, const byte *data, unsigned int index) {
+Status cu_arraylist_set(CUArrayList list, const byte *data, unsigned int index) {
 	if (list == NULL || data == NULL)
 		return FAILURE;
 
@@ -57,16 +57,16 @@ Status cu_arraylist_set(ArrayList list, const byte *data, unsigned int index) {
 	return SUCCESS;
 }
 
-Status cu_arraylist_prepend(ArrayList list, const byte* data) {
+Status cu_arraylist_prepend(CUArrayList list, const byte* data) {
 	return cu_arraylist_insertAt(list, data, 0);
 }
 
 
-Status cu_arraylist_append(ArrayList list, const byte* data) {
+Status cu_arraylist_append(CUArrayList list, const byte* data) {
 	return cu_arraylist_set(list, data, cu_arraylist_size(list));
 }
 
-int al_search(ArrayList l, const byte* data) {
+int al_search(CUArrayList l, const byte* data) {
 	if (l == NULL || data == NULL)
 		return -2;
 
@@ -91,11 +91,11 @@ int al_search(ArrayList l, const byte* data) {
 }
 
 
-Status cu_arraylist_insertAt(ArrayList list, const byte *data, unsigned int index) {
-	if (list == NULL || data == NULL)
+Status cu_arraylist_insertAt(CUArrayList l, const byte *data, unsigned int index) {
+	if (l == NULL || data == NULL)
 		return FAILURE;
 
-	ARRAYLIST *list = cast(list);
+	ARRAYLIST *list = cast(l);
 
 	if (index >= list->itemCount) 
 		return cu_arraylist_set(list, data, index);
@@ -105,28 +105,29 @@ Status cu_arraylist_insertAt(ArrayList list, const byte *data, unsigned int inde
 	int signed_index = (int) index;
 
 	for (int i = list->itemCount - 1; i >= signed_index; i--)
-        cu_arraylist_set(list, &(list->data[i * list->bytesPerItem]), i + 1);
+        	cu_arraylist_set(list, &(list->data[i * list->bytesPerItem]), i + 1);
 	
 
 
-	return cu_arraylist_set(list, data, index);
+	return cu_arraylist_set(l, data, index);
 }
 
 
 
-Status cu_arraylist_remove(ArrayList list, unsigned int index) {
-	if (list == NULL)
+Status cu_arraylist_remove(CUArrayList l, unsigned int index) {
+	if (l == NULL)
 		return FAILURE;
 
-	ARRAYLIST *list = cast(list);
+	ARRAYLIST *list = cast(l);
 
-	if (index >= list->itemCount) 
+	if (index > list->itemCount) 
 		return FAILURE;
 	
 
-	for (int i = index + 1; i < list->itemCount; i++) 
-		for (int j = 0; j < list->bytesPerItem; j++) 
-			list->data[((i - 1) * list->bytesPerItem) + j] = list->data[(i * list->bytesPerItem) + j];
+	memcpy(
+			list->data + index * list->bytesPerItem,
+		       	list->data + index * list->bytesPerItem + list->bytesPerItem,
+		       	list->bytesPerItem * (list->itemCount - index) );//TODO fix & test this mess
 	
 
 	list->itemCount--;
@@ -135,7 +136,7 @@ Status cu_arraylist_remove(ArrayList list, unsigned int index) {
 }
 
 
-Status cu_arraylist_clear(ArrayList list) {
+Status cu_arraylist_clear(CUArrayList list) {
 	if (list == NULL)
 		return FAILURE;
 
@@ -144,7 +145,7 @@ Status cu_arraylist_clear(ArrayList list) {
 	return SUCCESS;
 }
 
-Boolean cu_arraylist_isEmpty(ArrayList list) {
+Boolean cu_arraylist_isEmpty(CUArrayList list) {
 	if (list == NULL)
 		return TRUE;
 
@@ -152,7 +153,7 @@ Boolean cu_arraylist_isEmpty(ArrayList list) {
 }
 
 
-int cu_arraylist_size(ArrayList list) {
+int cu_arraylist_size(CUArrayList list) {
 	if (list == NULL)
 		return -1;
 
@@ -176,14 +177,14 @@ Status cu_arraylist__resize(ARRAYLIST *list, unsigned int newItemCapacity) {
 	return cu_arraylist__resize(list, newItemCapacity);
 }
 
-byte* cu_arraylist_viewRaw(ArrayList list){
+byte* cu_arraylist_viewRaw(CUArrayList list){
 	if(list == NULL)
 		return NULL;
 	return cast(list)->data;
 }
 
 
-void cu_arraylist_destroy(ArrayList *list) {
+void cu_arraylist_destroy(CUArrayList *list) {
 	if (list == NULL || *list == NULL)
 		return;
 

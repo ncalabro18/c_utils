@@ -1,4 +1,3 @@
-//called NString for Nick's String, mostly for concern over compatibility
 #ifndef N_String_H
 #define N_String_H
 
@@ -7,44 +6,41 @@
 #include <stdio.h>
 #include "../util.h"
 
-
-typedef void* NString;
-
+typedef void* CUString;
 
 
-NString nstr_initialize();
+CUString cu_string_init();
 
-NString nstr_initialize_cstr(const char *c_str);
+CUString cu_string_init_cstr(const char *c_str);
 
-NString cu_nstirng_init_capacity(unsigned int capacity);
+CUString cu_string_init_capacity(unsigned int capacity);
 
-NString cu_nstring_init_char(char c);
+CUString cu_string_init_char(char c);
 
-NString nstr_initialize_nstring( NString copy);
+CUString cu_string_init_custring(CUString copy);
 
-NString cu_nstring_substring(NString const str, unsigned int a, unsigned int b);
+CUString cu_string_substring(CUString str, unsigned int a, unsigned int b);
 
-Status cu_nstring_concat_nstring(NString left, NString const right);
-Status cu_nstring_concat_char(NString str, char c);
-Status cu_nstring_concat_cstr(NString str, const char *cstr);
+Status cu_string_concat_custring(CUString left, CUString right);
+Status cu_string_concat_char(CUString str, char c);
+Status cu_string_concat_cstr(CUString str, const char *cstr);
 
-char* nstr_cstr(NString);
+char* cu_string_cstr(CUString s);
 
-Boolean cu_nstring_contains(NString const str1, NString const str2);
+Boolean cu_string_contains(CUString str1, CUString str2);
 
-Status cu_nstring_print(NString const str, FILE* file);
+Status cu_string_print(CUString str, FILE* file);
 
-int cu_nstring_cmp(NString const str1, NString const str2);
+int cu_string_cmp(CUString str1, CUString str2);
 
-int cu_nstring_getChar(NString const str, unsigned int index);
+int cu_string_getChar(CUString str, unsigned int index);
 
-Status cu_nstring_setChar(NString str, char c, unsigned int index); //index must be in bounds
+Status cu_string_setChar(CUString str, char c, unsigned int index); //index must be in bounds
 
-int cu_nstring_length(NString const str);
+int cu_string_length(CUString str);
 
+Status cu_string_resize(CUString str, unsigned int minimumCapacity);
 
-Status cu_nstring_resize(NString str, unsigned int minimumCapacity);
-
-void cu_nstring_destroy(NString* s); //NOTE pass the address of the opaque object for// cu_nstring_destroy function
+void cu_string_destroy(CUString* s); //NOTE pass the address of the opaque object
 
 #endif

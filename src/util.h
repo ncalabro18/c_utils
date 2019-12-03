@@ -1,6 +1,7 @@
-//This header is for c_utils types
+//This header is for c_util types
 #ifndef UTIL_H
 #define UTIL_H
+#include <stdio.h>
 
 
 //used to make pointer arithmetic simpler
@@ -21,7 +22,7 @@ typedef enum _status {
 }Status;
 
 
-//boolean enum
+//boolean enum for simplicity
 typedef enum _boolean {
 	FALSE = 0, TRUE = 1
 } Boolean;

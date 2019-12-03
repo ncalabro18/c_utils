@@ -3,24 +3,24 @@
 #include <limits.h>
 #include <string.h>
 
-#define cast(x) ((NSTRING*)(x))
+#define cast(x) ((CU_STRING*)(x))
 #define RESIZE_MODIFIER 2
 
-typedef struct _nstring{
+typedef struct CU_STRING{
     unsigned int length;
     unsigned int capacity;
     char *data;
-} NSTRING;
+} CU_STRING;
 
 
 
-NString cu_nstirng_init(){
-    return nstr_initialize_cstr("");
+CUString cu_string_init(){
+    return cu_string_init_cstr("");
 }
 
-NString cu_nstirng_init_cstr(const char *c_str){
+CUString cu_string_init_cstr(const char *c_str){
     int length = strlen(c_str);
-    NSTRING *str = (NSTRING*) cu_nstirng_init_capacity(
+    CU_STRING *str = (CU_STRING*) cu_string_init_capacity(
             length < NSTRING_DEFAULT_CAPACITY ? NSTRING_DEFAULT_CAPACITY : length + 1);
     if(!str) return NULL;
 
@@ -28,11 +28,11 @@ NString cu_nstirng_init_cstr(const char *c_str){
 
     str->length = length;
 
-    return (NString) str;
+    return (CUString) str;
 }
 
-NString cu_nstirng_init_capacity(unsigned int capacity){
-    NSTRING *str = (NSTRING*) malloc(sizeof(NSTRING));
+CUString cu_string_init_capacity(unsigned int capacity){
+    CU_STRING *str = (CU_STRING*) malloc(sizeof(CU_STRING));
     if(!str) return NULL;
 
     str->data = (char*) malloc(capacity);
@@ -43,24 +43,24 @@ NString cu_nstirng_init_capacity(unsigned int capacity){
     str->capacity = capacity;
     str->length = 0;
 
-    return (NString) str;
+    return (CUString) str;
 }
 
-NString cu_nstring_init_char(char c){
-    NSTRING *str = (NSTRING*) cu_nstirng_init_capacity(NSTRING_DEFAULT_CAPACITY);
+CUString cu_string_init_char(char c){
+    CU_STRING *str = (CU_STRING*) cu_string_init_capacity(NSTRING_DEFAULT_CAPACITY);
     if(!str) return NULL;
 
     *(str->data) = c;
     str->length++;
 
-    return (NString) str;
+    return (CUString) str;
 }
 
-NString cu_nstring_init_nstring(const NString copy){
-    return cu_nstring_substring(copy, 0, cu_nstring_length(copy));
+CUString cu_string_init_custring(const CUString copy){
+    return cu_string_substring(copy, 0, cu_string_length(copy));
 }
 
-NString cu_nstring_substring(const NString str, unsigned int a, unsigned int b){
+CUString cu_string_substring(const CUString str, unsigned int a, unsigned int b){
     if(a > b) {
         int temp = a;
         a = b;
@@ -69,28 +69,28 @@ NString cu_nstring_substring(const NString str, unsigned int a, unsigned int b){
     if(!str || a >= cast(str)->length || b > cast(str)->length)
         return NULL;
 
-    NSTRING *substr = cast(cu_nstirng_init_capacity(b - a));
-    NSTRING *orgstr = cast(str);
+    CU_STRING *substr = cast(cu_string_init_capacity(b - a));
+    CU_STRING *orgstr = cast(str);
 
     memcpy(substr->data, orgstr->data, substr->capacity);
 
     substr->length = substr->capacity;
 
-    return (NString) substr;
+    return (CUString) substr;
 }
 
-Status cu_nstring_concat_char(NString str, char c){
+Status cu_string_concat_char(CUString str, char c){
     if(!str) return FAILURE;
 
     return SUCCESS;
 }
 
 
-Status cu_nstring_concat_cstr(NString str, const char *cstr){
+Status cu_string_concat_cstr(CUString str, const char *cstr){
     if(!str || !cstr) return FAILURE;
 
     unsigned int length = strlen(cstr);
-    if(!cu_nstring_resize(cast(str), cast(str)->length + length))
+    if(!cu_string_resize(cast(str), cast(str)->length + length))
         return FAILURE;
 
     memcpy(cast(str)->data + cast(str)->length, cstr, length);
@@ -101,11 +101,11 @@ Status cu_nstring_concat_cstr(NString str, const char *cstr){
 }
 
 
-Status cu_nstring_concat_nstring(NString left, const NString right){
+Status cu_string_concat_string(CUString left, const CUString right){
     if(left == NULL || right == NULL)
         return FAILURE;
 
-    if(!cu_nstring_resize(cast(left), cast(left)->length + cast(right)->length))
+    if(!cu_string_resize(cast(left), cast(left)->length + cast(right)->length))
         return FAILURE;
 
     memcpy(cast(left)->data + cast(left)->length, cast(right)->data, cast(right)->length);
@@ -115,10 +115,10 @@ Status cu_nstring_concat_nstring(NString left, const NString right){
 }
 
 
-char* cu_nstring_cstr(NString str){
+char* cu_string_cstr(CUString str){
     if(!str) return NULL;
 
-    if(!cu_nstring_resize(cast(str), cast(str)->length + 1)) return NULL;
+    if(!cu_string_resize(cast(str), cast(str)->length + 1)) return NULL;
 
     cast(str)->data[cast(str)->length] = '\0';
 
@@ -126,7 +126,7 @@ char* cu_nstring_cstr(NString str){
 }
 
 
-Boolean cu_nstring_contains(const NString str1, const NString str2){
+Boolean cu_string_contains(const CUString str1, const CUString str2){
     if(!str1 || !str2)
         return FALSE;
 
@@ -143,7 +143,7 @@ Boolean cu_nstring_contains(const NString str1, const NString str2){
     return FALSE;
 }
 
-Status cu_nstring_print(const NString str, FILE* file){
+Status cu_string_print(const CUString str, FILE* file){
     if(!str || !file)
         return FAILURE;
 
@@ -152,24 +152,24 @@ Status cu_nstring_print(const NString str, FILE* file){
     return SUCCESS;
 }
 
-int cu_nstring_cmp(const NString str1, const NString str2){
+int cu_string_cmp(const CUString str1, const CUString str2){
     //NULL check for str1 is covered from the function calls
-    char *cstr1 = cu_nstring_cstr(str1);
-    char *cstr2 = cu_nstring_cstr(str2);
+    char *cstr1 = cu_string_cstr(str1);
+    char *cstr2 = cu_string_cstr(str2);
 
     if(!cstr1 || !cstr2)
         return INT_MAX;
     return strcmp(cstr1, cstr2);
 }
 
-int cu_nstring_getChar(const NString str, unsigned int index){
+int cu_string_getChar(const CUString str, unsigned int index){
     if(!str || index >= cast(str)->length)
         return -1;
 
     return cast(str)->data[index];
 }
 
-Status cu_nstring_setChar(NString str, char c, unsigned int index){
+Status cu_string_setChar(CUString str, char c, unsigned int index){
     if(!str || index >= cast(str)->length) return FAILURE;
 
     cast(str)->data[index] = c;
@@ -177,13 +177,13 @@ Status cu_nstring_setChar(NString str, char c, unsigned int index){
     return SUCCESS;
 }
 
-int cu_nstring_length(const NString str) {
+int cu_string_length(const CUString str) {
     if(!str) return -1;
     return cast(str)->length;
 }
 
 
-Status cu_nstring_resize(NString str, unsigned int minimumCapacity){
+Status cu_string_resize(CUString str, unsigned int minimumCapacity){
 
         while(cast(str)->capacity < minimumCapacity) {
             char *tempData = (char*) realloc(cast(str)->data, cast(str)->capacity * RESIZE_MODIFIER);
@@ -194,7 +194,7 @@ Status cu_nstring_resize(NString str, unsigned int minimumCapacity){
         return SUCCESS;
 }
 
-void cu_nstring_destroy(NString *s){
+void cu_string_destroy(CUString *s){
     if(!s || !*s) return;
 
     free(cast(*s)->data);

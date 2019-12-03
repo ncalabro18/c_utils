@@ -7,6 +7,7 @@
 #include <time.h>
 
 
+
 //returns status determining whether or not the given function sorts arrays
 Status test_sort(void(*)(int*, unsigned int), char*, unsigned int);
 //runs merge sort on array and tests if its sorted
@@ -17,21 +18,23 @@ Status testfunc_selection(char *buffer, unsigned int length);
 
 int main(){
 
-	UnitTests ut = ut_init();
+	CUTests ut = cu_tests_init();
 	if(!ut)
 		return -1;
 
-	ut_addTest(ut, testfunc_selection);
-	ut_addTest(ut, testfunc_bubble);
-	ut_addTest(ut, testfunc_merge);
-	ut_test(ut);
+    	cu_tests_addTest(ut, testfunc_selection);
+    	cu_tests_addTest(ut, testfunc_bubble);
+	//ut_addTest(ut, testfunc_merge);
+    	cu_tests_test(ut);
 
-	ut_destroy(&ut);
+    	cu_tests_destroy(&ut);
 	return 0;
 }
 
 Status testfunc_selection(char *buffer, unsigned int length){
-	return test_sort(cusort_selection_int, buffer, length);
+	if(test_sort(cusort_selection_int, buffer, length) == FAILURE) return FAILURE;
+
+	return SUCCESS;
 }
 
 Status testfunc_bubble(char *buffer, unsigned int length){
@@ -65,5 +68,44 @@ Status test_sort(void(*sort_func)(int*, unsigned int), char *buffer, unsigned in
 	}
 	free(array);
 	return SUCCESS;
+}
+
+int* cumake_randomArray_int(unsigned int arrayCount){
+	if(arrayCount == 0) return NULL;
+
+	int* array = (int*) malloc(sizeof(int) * arrayCount);
+	if(!array) return NULL;
+
+	srand(time(0));
+	for(int i = 0; i < arrayCount; i++)
+		array[i] = rand() ;
+
+	return array;
+}
+
+unsigned int* cumake_randomArray_uint(unsigned int arrayCount, unsigned int max){
+	if(arrayCount == 0) return NULL;
+
+	unsigned int *array = malloc(sizeof(unsigned int) * arrayCount);
+	if(!array) return NULL;
+
+	srand(time(0));
+	for(int i = 0; i < arrayCount; i++)
+		array[i] = (unsigned int) rand() % max;
+
+	return array;
+}
+
+float* cumake_randomArray_float(unsigned int arrayCount, float max){
+	if(arrayCount == 0) return NULL;
+
+	float *array = malloc(sizeof(float) * arrayCount);
+	if(!array) return NULL;
+
+	srand(time(0));
+	for(int i = 0; i < arrayCount; i++)
+		array[i] = max * (float) (rand() / RAND_MAX);
+
+	return array;
 }
 

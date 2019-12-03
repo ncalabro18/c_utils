@@ -1,22 +1,24 @@
-#ifndef UNIT_TESTS_H
-#define UNIT_TESTS_H
+#ifndef CU_TESTS_H
+#define CU_TESTS_H
 
 #include <stdio.h>
 #include "cu_utils.h"
 #include "structures/cu_arraylist.h"
 
-typedef void* UnitTests;
+typedef void* CUTests;
 
-UnitTests ut_init();
+CUTests cu_tests_init();
 
-void ut_setOutput(UnitTests, FILE*);
+void cu_tests_setOutput(CUTests ut, FILE *file);
 
-void ut_addTest(UnitTests, Status(*function)(char*,unsigned int));
+void cu_tests_addTest(CUTests ut, Status(*function)(char*, unsigned int));
 		
-Status ut_test(UnitTests);
+Status cu_tests_test(CUTests t);
 
-ArrayList ut_results(UnitTests);
+void cu_tests_log(CUTests t, const char *);
 
-void ut_destroy(UnitTests*);
+CUArrayList cu_tests_results(CUTests t);
+
+void cu_tests_destroy(CUTests* pt);
 
 #endif
