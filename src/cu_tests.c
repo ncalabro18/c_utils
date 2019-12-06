@@ -15,6 +15,8 @@ typedef struct CU_TESTS{
 	CUArrayList results;
 
 	Boolean initError;
+
+	int currentTest;
 } CU_TESTS;
 
 
@@ -47,6 +49,7 @@ CUTests cu_tests_init(){
 
 		
 	ut->output = stdout;
+	ut->currentTest = -1;
 	ut->initError = FALSE;
 	return ut;
 }
@@ -101,46 +104,103 @@ Status cu_tests_test(CUTests t){
 
 	//runs all the functions
 	int failed = 0;
-	for(int i = 0; i < funcCount; i++){
+	for(ut->currentTest = 0; ut->currentTest < funcCount; ut->currentTest++){
 		cu_string_clear(ut->errorLog);
 
-		Status result =  functions[i]((CUTests) ut );
+		Status result =  functions[ut->currentTest] ((CUTests) ut );
 
 		if(cu_arraylist_append(ut->results, (byte *) &result) == FAILURE)
 			return FAILURE;
 		if(result == FAILURE){
-			fprintf(ut->output, "\t<Test %d>: Failed\n", i);
+			fprintf(ut->output, "\t<Test %d>: Failed\n", ut->currentTest);
 			if(cu_string_length(ut->errorLog) > 0){
-				fprintf(ut->output, "\t<Test %d>: %s\n", i, cu_string_cstr(ut->errorLog));
+				fprintf(ut->output, "\t<Test %d>: %s\n", ut->currentTest, cu_string_cstr(ut->errorLog));
 			}
 			else
-				fprintf(ut->output, "\t<Test %d>: No error log\n", i);
-			fprintf(ut->output, "\t<Test %d>: Continuing...\n", i);
+				fprintf(ut->output, "\t<Test %d>: No error log\n", ut->currentTest);
+			fprintf(ut->output, "\t<Test %d>: Continuing...\n", ut->currentTest);
 			failed++;
 		}
 	}
 
 	if(failed == 0) fputc('\n', ut->output);
 
-	fprintf(ut->output, "...%d/%d tests passed.\n\n",  funcCount - failed, funcCount);
+	fprintf(ut->output, "...%d/%d tests passed.\n",  funcCount - failed, funcCount);
 
-	if(failed == 0){
-		fprintf(ut->output, "Nice!\n");
-		return SUCCESS;
-	}
 
+	fprintf(ut->output, "\n");
 	return FAILURE;
 }
 
-void cu_tests_log(CUTests t, const char *msg){
+#define PARSE_BUFFER_LENGTH 1024
+byte parseBuffer[PARSE_BUFFER_LENGTH];
+
+void cu_tests_log(CUTests t, CUString msg){
+	if(!t || !msg) return;
+
+	cu_string_print(msg, cast(t)->output);
+}
+void cu_tests_log_cstr(CUTests t, const char *msg){
 	if(!t || !msg) return;
 
 	if(cu_string_concat_cstr(cast(t)->errorLog, msg) == FAILURE){
 		perror("cu_tests_log: cu_string_concat_cstr FAILURE");
-		exit(-1);
 	}
 }
 
+void cu_tests_log_int(CUTests t, int num){
+	if(!t) return;
+	int len = 0;
+	while(num > 0 && len < PARSE_BUFFER_LENGTH - 1){
+		char c = (char) (num % 10) + '0';
+		parseBuffer[len] = c;
+		num /= 10;
+		len++;
+	}	
+	parseBuffer[len] = '\0';
+	if(cu_string_concat_cstr(cast(t)->errorLog, parseBuffer) == FAILURE)
+		perror("cu_tests_log_int: cu_string_concat_cstr FAILURE");
+}
+void cu_tests_log_uint(CUTests t, unsigned int num){
+	if(!t) return;
+	int len = 0;
+	while(num > 0 && len < PARSE_BUFFER_LENGTH - 1){
+		char c = (char) (num % 10) + '0';
+		parseBuffer[len] = c;
+		num /= 10;
+		len++;
+	}
+	parseBuffer[len] = '\0';
+	if(cu_string_concat_cstr(cast(t)->errorLog, parseBuffer) == FAILURE)
+		perror("cu_tests_log_uint: cu_string_concat_cstr FAILURE");
+}
+
+void cu_tests_log_char(CUTests t, char c){
+	if(!t) return;
+	
+	if(cu_string_concat_char(cast(t)->errorLog, c) == FAILURE)
+		perror("cu_tests_log_char: cu_string_concat_char FAILURE");
+}
+void cu_tests_log_float(CUTests t, float num){
+	if(!t) return;
+	if(sprintf(parseBuffer, "%f", num) >= PARSE_BUFFER_LENGTH )
+		exit(-1);//should exit if theres a buffer overflow
+}
+void cu_tests_log_double(CUTests t, double num){
+	if(!t) return;
+	if(sprintf(parseBuffer, "%lf", num) >= PARSE_BUFFER_LENGTH )
+		exit(-1);//should exit if theres a buffer overflow
+}
+void cu_tests_log_clear(CUTests t){
+	if(!t) return;
+	cu_string_clear(cast(t)->errorLog);
+}
+
+void cu_tests_log_newline(CUTests t){
+	if(!t) return;
+	
+	fprintf(cast(t)->output, "\n<Test %d>", cast(t)->currentTest);		
+}
 
 CUArrayList cu_tests_results(CUTests t){
 	if(!t)

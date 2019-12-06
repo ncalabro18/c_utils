@@ -79,22 +79,22 @@ CUString cu_string_init_int(int i){
 }
 
 CUString cu_string_substring(const CUString str, unsigned int a, unsigned int b){
-    if(a > b) {
-        int temp = a;
-        a = b;
-        b = temp;
-    }
-    if(!str || a >= cast(str)->length || b > cast(str)->length)
-        return NULL;
+	if(!str || a >= cast(str)->length || b > cast(str)->length)
+		return NULL;
+	if(a == b)
+		return cu_string_init();
+	if(a > b)
+       		cuswap_uint(&a, &b);
 
-    CU_STRING *substr = cast(cu_string_init_capacity(b - a));
-    CU_STRING *orgstr = cast(str);
-
-    memcpy(substr->data, orgstr->data, substr->capacity);
-
-    substr->length = substr->capacity;
-
-    return (CUString) substr;
+    
+	unsigned int len = b - a;
+	CU_STRING *substr = cast(cu_string_init_capacity(len + 1));
+	
+	memcpy(substr->data, cast(str)->data + a, len);
+	
+	substr->length = len;
+	
+	return (CUString) substr;
 }
 
 CUString cu_string_extract(FILE *file){
@@ -134,6 +134,40 @@ CUString cu_string_extract(FILE *file){
 	return str;
 }
 
+//Status cu_string_resize(CUString str, unsigned int minimumCapacity);
+//2 memory operations:
+//	first memmove to account for the new size
+//	then memcpy to copy the newSegment into the string object
+//	ex. ("hello, world", 3, 6, "foobar")
+//	1st: "hel...... world" //value of dots insignificant
+//	2nd: "helfoobar world
+Status cu_string_setSegment(CUString str, unsigned int a, unsigned int b, const char *newSegment){
+	if(!str || !newSegment) return FAILURE;	
+	if(a > b || b > cast(str)->length) return FAILURE;
+
+	//size refers to the segment
+	int size_old = b - a;
+	int size_new = strlen(newSegment);
+
+	//new length for the string
+	int length_new = (size_new - size_old) + cast(str)->length;
+
+	if(size_old != size_new){
+		if(cu_string_resize(str, length_new) == FAILURE)
+			return FAILURE;
+
+		memmove(
+			cast(str)->data + a + size_new, 
+			cast(str)->data + b,
+		       	cast(str)->length - b);
+	}
+
+	memcpy(cast(str)->data + a, newSegment, size_new);
+	cast(str)->length = length_new;
+
+	return SUCCESS;
+}
+
 Status cu_string_concat_char(CUString str, char c){
     if(!str) return FAILURE;
 
@@ -159,7 +193,7 @@ Status cu_string_concat_cstr(CUString str, const char *cstr){
 }
 
 
-Status cu_string_concat_string(CUString left, const CUString right){
+Status cu_string_concat_custring(CUString left, const CUString right){
     if(left == NULL || right == NULL)
         return FAILURE;
 

@@ -28,11 +28,19 @@ CUString cu_string_substring(CUString str, unsigned int a, unsigned int b);
 //the stream after will be set to the first whitespace character following the extracted characters
 CUString cu_string_extract(FILE *file);
 
+//sets the string segment between a(inclusive) and b(exclusive) to newSegment cstr
+Status cu_string_setSegment(CUString str, unsigned int a, unsigned int b, const char *newSegment);
+
+//performs string concatination left parameter CUString is destination string
 Status cu_string_concat_custring(CUString left, CUString right);
 Status cu_string_concat_char(CUString str, char c);
 Status cu_string_concat_cstr(CUString str, const char *cstr);
 
+
 Status cu_string_reverse(CUString str);
+
+//clears the string to the empty string ""
+//does not unallocate data
 void cu_string_clear(CUString str);
 
 char* cu_string_cstr(CUString s);
@@ -52,5 +60,6 @@ int cu_string_length(CUString str);
 Status cu_string_resize(CUString str, unsigned int minimumCapacity);
 
 void cu_string_destroy(CUString* s); //NOTE pass the address of the opaque object
+
 
 #endif

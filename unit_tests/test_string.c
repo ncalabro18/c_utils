@@ -4,16 +4,37 @@
 
 
 Status testfunc_string_init_int(CUTests t);
+Status testfunc_string_setSegment(CUTests t);
+Status testfunc_string_cmp(CUTests t);
+Status testfunc_string_substring(CUTests t);
+Status testfunc_string_concat(CUTests t);
 
 int main(void){
 
 	CUTests tests = cu_tests_init();
 
 	cu_tests_addTest(tests, testfunc_string_init_int);
+	cu_tests_addTest(tests, testfunc_string_setSegment);
+	cu_tests_addTest(tests, testfunc_string_cmp);
+	cu_tests_addTest(tests, testfunc_string_substring);
+  	cu_tests_addTest(tests, testfunc_string_concat);
 
 	cu_tests_test(tests);
 
 	cu_tests_destroy(&tests);
+
+	/*
+	CUString s = cu_string_init_cstr("hello, world");
+
+	if(cu_string_setSegment(s, 3, 6, "foobar") == FAILURE){
+		printf("FAILURE\n");
+		return -1;
+	}
+
+	cu_string_print(s, stdout);
+
+	cu_string_destroy(&s);
+	*/
 
 	return 0;
 }
@@ -31,33 +52,33 @@ Status testfunc_string_init_int(CUTests t){
 	CUString s7 = cu_string_init_int(928142);
 
 
-	cu_tests_log(t, "s1:");
+	cu_tests_log_cstr(t, "s1:");
 
 	if(cu_string_getChar(s1, 0) != '5') return FAILURE;
 
-	cu_tests_log(t, "s2:");
-	cu_tests_log(t, cu_string_cstr(s2));
+	cu_tests_log_cstr(t, "s2:");
+	cu_tests_log_cstr(t, cu_string_cstr(s2));
 
 	if(cu_string_getChar(s2, 0) != '5') return FAILURE;
 	if(cu_string_getChar(s2, 1) != '7') return FAILURE;
 	if(cu_string_getChar(s2, 2) != '2') return FAILURE;
 
-	cu_tests_log(t, "s3:");
+	cu_tests_log_cstr(t, "s3:");
 
 	if(cu_string_getChar(s3, 0) != '6') return FAILURE;
 	if(cu_string_getChar(s3, 1) != '5') return FAILURE;
 
-	cu_tests_log(t, "s4:");
+	cu_tests_log_cstr(t, "s4:");
 	
 	if(cu_string_getChar(s4, 0) != '2') return FAILURE;
 	if(cu_string_getChar(s4, 1) != '2') return FAILURE;
 
 
-	cu_tests_log(t, "s5:");
+	cu_tests_log_cstr(t, "s5:");
 
 	if(cu_string_getChar(s5, 0) != '1') return FAILURE;
 
-	cu_tests_log(t, "s6:");
+	cu_tests_log_cstr(t, "s6:");
 
 	if(cu_string_getChar(s6, 0) != '7') return FAILURE;
 	if(cu_string_getChar(s6, 1) != '8') return FAILURE;
@@ -66,7 +87,7 @@ Status testfunc_string_init_int(CUTests t){
 	if(cu_string_getChar(s6, 4) != '3') return FAILURE;
 
 
-	cu_tests_log(t, "s7:");
+	cu_tests_log_cstr(t, "s7:");
 
 	if(cu_string_getChar(s7, 0) != '9') return FAILURE;
 	if(cu_string_getChar(s7, 1) != '2') return FAILURE;
@@ -88,106 +109,182 @@ Status testfunc_string_init_int(CUTests t){
 	return SUCCESS;
 }
 
-/*
-Status testCase_nstr_cmp(const char *a, const char *b){
-    NString str1 = nstr_initialize_cstr(a);
-    NString str2 = nstr_initialize_cstr(b);
+Status testfunc_string_setSegment(CUTests t){
+	if(!t) return FAILURE;
+	CUString s1, compare;
 
-    int n = nstr_cmp(str1, str2);
+	s1 = cu_string_init_cstr("hello, world");
+	if(cu_string_setSegment(s1, 3, 6, "foobar") == FAILURE){
+		cu_tests_log_cstr(t, "cu_string_setSegment FAILURE");
+		return FAILURE;
+	}
+	compare = cu_string_init_cstr("helfoobar world");
+	if(cu_string_cmp(s1, compare) != 0){
+		cu_tests_log_cstr(t, "cu_string_cmp != 0");
+		return FAILURE;
+	}
+	cu_string_destroy(&s1);
+	cu_string_destroy(&compare);
+
+	s1 = cu_string_init_cstr("test_[3]_test");
+	if(cu_string_setSegment(s1, 5, 8, "hello, world") == FAILURE){
+		cu_tests_log_cstr(t, "cu_string_setSegment FAILURE");
+		return FAILURE;
+	}
+	compare = cu_string_init_cstr("test_hello, world_test");
+	if(cu_string_cmp(s1, compare) != 0){
+		cu_tests_log_cstr(t, "cu_string_cmp != 0");
+		return FAILURE;
+	}
+	cu_string_destroy(&s1);
+	cu_string_destroy(&compare);
+
+
+	s1 = cu_string_init_cstr("1234567890");
+	if(cu_string_setSegment(s1, 2, 8, "ar") == FAILURE){
+		cu_tests_log_cstr(t, "cu_string_setSegment FAILURE");
+		return FAILURE;
+	}
+	compare = cu_string_init_cstr("12ar90");
+	if(cu_string_cmp(s1, compare) != 0){
+		cu_tests_log_cstr(t, "cu_string_cmp != 0");
+		return FAILURE;
+	}
+
+	cu_string_destroy(&s1);
+	cu_string_destroy(&compare);
+
+	return SUCCESS;
+}
+
+Status testfunc_string_cmp_helper(const char *a, const char *b){
+    CUString str1 = cu_string_init_cstr(a);
+    CUString str2 = cu_string_init_cstr(b);
+
+    int n = cu_string_cmp(str1, str2);
     int c = strcmp(a, b);
 
     int returnVal = (c == n) ? SUCCESS : FAILURE;
 
-    nstr_destroy(&str1);
-    nstr_destroy(&str2);
+    cu_string_destroy(&str1);
+    cu_string_destroy(&str2);
 
     return returnVal;
 }
 
-Status testCase_nstr_substring(const char *cstr, unsigned int a, unsigned int b){
-    NString str = nstr_initialize_cstr(cstr);
-    NString substr = nstr_substring(str, a, b);
-    for(unsigned int i = a; i < b; i++)
-        if(nstr_charAt(str, i) != nstr_charAt(substr, i - a))
-            return FAILURE;
-    nstr_destroy(&str);
-    nstr_destroy(&substr);
-    return SUCCESS;
-}
+Status testfunc_string_cmp(CUTests t){
 
-Status testCase_nstr_concat(const char *a, const char *b){
-    NString str1 = nstr_initialize_cstr(a);
-    NString str2 = nstr_initialize_cstr(b);
-
-    int original_length = nstr_length(str1);
-    nstr_concat(str1, str2);
-    int new_length = nstr_length(str1);
-
-    for(int i = 0; i < original_length; i++)
-        if(nstr_charAt(str1, i) != a[i])
-            return FAILURE;
-
-    for(int i = original_length; i < new_length; i++)
-        if(nstr_charAt(str1, i) != b[i])
-            return FAILURE;
-
-    nstr_destroy(&str1);
-    nstr_destroy(&str2);
-    return SUCCESS;
-}
-
-Status test_cmp(char *buffer, unsigned int length){
-
-    if(!testCase_nstr_cmp("","")) return FAILURE;
-    if(!testCase_nstr_cmp("hello, world","hello, world")) return FAILURE;
-    if(!testCase_nstr_cmp("jf8172o3md","jf7ha")) return FAILURE;
-    if(!testCase_nstr_cmp("abcdefghijklmnopqrstuvwxyz","abcdefghijklmnopqrstuvwxyz")) return FAILURE;
-    if(!testCase_nstr_cmp("asdf","asdf")) return FAILURE;
-    if(!testCase_nstr_cmp("world, hello","world, he")) return FAILURE;
-    if(!testCase_nstr_cmp("-+=_","-+=_")) return FAILURE;
-    if(!testCase_nstr_cmp("hello","hello")) return FAILURE;
-    if(!testCase_nstr_cmp("this seems excessive","this idk\n\t")) return FAILURE;
-    if(!testCase_nstr_cmp("asdf","jkl;")) return FAILURE;
+    if(!testfunc_string_cmp_helper("","")) return FAILURE;
+    if(!testfunc_string_cmp_helper("hello, world","hello, world")) return FAILURE;
+    if(!testfunc_string_cmp_helper("jf8172o3md","jf7ha")) return FAILURE;
+    if(!testfunc_string_cmp_helper("abcdefghijklmnopqrstuvwxyz","abcdefghijklmnopqrstuvwxyz")) return FAILURE;
+    if(!testfunc_string_cmp_helper("asdf","asdf")) return FAILURE;
+    if(!testfunc_string_cmp_helper("world, hello","world, he")) return FAILURE;
+    if(!testfunc_string_cmp_helper("-+=_","-+=_")) return FAILURE;
+    if(!testfunc_string_cmp_helper("hello","hello")) return FAILURE;
+    if(!testfunc_string_cmp_helper("this seems excessive","this idk\n\t")) return FAILURE;
+    if(!testfunc_string_cmp_helper("asdf","jkl;")) return FAILURE;
 
     return SUCCESS;
 }
 
+Status testfunc_string_substring_helper(CUTests t, const char *cstr, unsigned int a, unsigned int b){
+	CUString str = cu_string_init_cstr(cstr);
+	if(str == NULL){
+		cu_tests_log_cstr(t, "cu_string_init_ctr NULL");
+		return FAILURE;
+	}
 
-Status test_substring(char *buffer, unsigned int length){
+	CUString substr = cu_string_substring(str, a, b);
+	if(substr == NULL){
+		cu_tests_log_cstr(t, "cu_string_substring NULL");
+		return FAILURE;
+	}
 
-    if(!testCase_nstr_substring("", 5, 7)) return FAILURE;
-    if(!testCase_nstr_substring("hello, world", 3, 6)) return FAILURE;
-    if(!testCase_nstr_substring("jf8172o3md", 2, 5)) return FAILURE;
-    if(!testCase_nstr_substring("abcdefghijklmnopqrstuvwxyz", 17, 20)) return FAILURE;
-    if(!testCase_nstr_substring("asdf",0, 3)) return FAILURE;
-    if(!testCase_nstr_substring("world, hello", 0, 1)) return FAILURE;
-    //next should just be a copy of the string
-    if(!testCase_nstr_substring("-+=_", 0, strlen("-+=_"))) return FAILURE;
-    if(!testCase_nstr_substring("hello", 2, 4)) return FAILURE;
+	Status ret = SUCCESS;
+	for(unsigned int i = a; i < b; i++){
+		int charstr = cu_string_getChar(str, i);
+		int charsub = cu_string_getChar(substr, i - a);
 
-    //no negation for the following; they should return FAILURE
-    //wrong order
-    if(testCase_nstr_substring("this seems excessive", 1, 0)) return FAILURE;
-    //out of bounds
-    if(testCase_nstr_substring("asdf", 0, 20)) return FAILURE;
+		if(charstr != charsub){
+			cu_tests_log_cstr(t, ":Incorrect character found:");
+			cu_tests_log_cstr(t, cstr);
+			cu_tests_log_cstr(t, ":");
+			cu_tests_log_cstr(t, cu_string_cstr(substr));
+			ret = FAILURE;
+
+			break;
+		}
+	}
+
+	cu_string_destroy(&str);
+	cu_string_destroy(&substr);
+	return ret;
+}
+
+Status testfunc_string_substring(CUTests t){
+
+    if(!testfunc_string_substring_helper(t, "hello, world", 3, 6)) return FAILURE;
+    if(!testfunc_string_substring_helper(t, "jf8172o3md", 2, 5)) return FAILURE;
+    if(!testfunc_string_substring_helper(t, "abcdefghijklmnopqrstuvwxyz", 17, 20)) return FAILURE;
+    if(!testfunc_string_substring_helper(t, "asdf", 0, 3)) return FAILURE;
+    if(!testfunc_string_substring_helper(t, "world, hello", 0, 1)) return FAILURE;
+    if(!testfunc_string_substring_helper(t, "-+=_", 0, strlen("-+=_"))) return FAILURE;
+    if(!testfunc_string_substring_helper(t, "hello", 2, 4)) return FAILURE;
+
+    if(!testfunc_string_substring_helper(t, "kj4124j1f48171242o3md", 0, 9)) return FAILURE;
 
     return SUCCESS;
 }
 
-Status test_concat(char *buffer, unsigned int length){
 
-    if(!testCase_nstr_concat("","")) return FAILURE;
-    if(!testCase_nstr_concat("hello, world","hello, world")) return FAILURE;
-    if(!testCase_nstr_concat("jf8172o3md","jf7ha")) return FAILURE;
-    if(!testCase_nstr_concat("abcdefghijklmnopqrstuvwxyz","abcdefghijklmnopqrstuvwxyz")) return FAILURE;
-    if(!testCase_nstr_concat("asdf","asdf")) return FAILURE;
-    if(!testCase_nstr_concat("world, hello","world, he")) return FAILURE;
-    if(!testCase_nstr_concat("-+=_","-+=_")) return FAILURE;
-    if(!testCase_nstr_concat("hello","hello")) return FAILURE;
-    if(!testCase_nstr_concat("this seems excessive","this idk\n\t")) return FAILURE;
-    if(!testCase_nstr_concat("asdf","jkl;")) return FAILURE;
+Status testfunc_string_concat_helper(CUTests t, const char *a, const char *b){
+	CUString str1 = cu_string_init_cstr(a);
+	CUString str2 = cu_string_init_cstr(b);
+	
+	int original_length = cu_string_length(str1);
+	if(cu_string_concat_custring(str1, str2) == FAILURE){
+		cu_tests_log_cstr(t, "cu_string_concat_custring FAILURE");
+		return FAILURE;
+	}
+	
+	int new_length = cu_string_length(str1);
+	if(new_length < 0){
+		cu_tests_log_cstr(t, "new_length < 0");
+		return FAILURE;
+	}
+	for(int i = 0; i < original_length; i++)
+		if(cu_string_getChar(str1, i) != a[i]){
+			cu_tests_log_cstr(t, "cu_string_getChar(str1,i) != a[i]");
+			return FAILURE;
+		}
+	for(int i = original_length; i < new_length; i++)
+		if(cu_string_getChar(str1, i) != b[i - original_length]){		
+			cu_tests_log_cstr(t, "cu_string_getChar(str1,i) != b[i]");
+			return FAILURE;
+		}
+	cu_string_destroy(&str1);
+	cu_string_destroy(&str2);
+	return SUCCESS;
+}
+
+
+Status testfunc_string_concat(CUTests t){
+
+    if(!testfunc_string_concat_helper(t, "","")) return FAILURE;
+    if(!testfunc_string_concat_helper(t, "aljfl","")) return FAILURE;
+    if(!testfunc_string_concat_helper(t, "","li721lkj")) return FAILURE;
+    if(!testfunc_string_concat_helper(t, "hello, world","hello, world")) return FAILURE;
+    if(!testfunc_string_concat_helper(t, "jf8172o3md","jf7ha")) return FAILURE;
+    if(!testfunc_string_concat_helper(t, "abcdefghijklmnopqrstuvwxyz","abcdefghijklmnopqrstuvwxyz")) return FAILURE;
+    if(!testfunc_string_concat_helper(t, "asdf","asdf")) return FAILURE;
+    if(!testfunc_string_concat_helper(t, "world, hello","world, he")) return FAILURE;
+    if(!testfunc_string_concat_helper(t, "-+=_","-+=_")) return FAILURE;
+    if(!testfunc_string_concat_helper(t, "hello","hello")) return FAILURE;
+    if(!testfunc_string_concat_helper(t, "this seems excessive","this idk\n\t")) return FAILURE;
+    if(!testfunc_string_concat_helper(t, "asdf","jkl;")) return FAILURE;
 
     return SUCCESS;
 }
-*/
+
 

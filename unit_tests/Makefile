@@ -1,7 +1,10 @@
 CC = gcc
 FLAGS = -Wall -g -I../src libcu_utils.a
 LINK = libcu_utils.a
-TESTS = test_sort test_queue test_string test_arraylist test_stack
+TESTS = test_sort test_queue test_string test_arraylist test_stack test
+
+test: test.c libcu_utils.a
+	$(CC $(FLAGS) test.c -o test $(LINK)
 
 test_sort: test_sort.c libcu_utils.a
 	$(CC) $(FLAGS) test_sort.c -o test_sort $(LINK)
@@ -20,6 +23,7 @@ test_arraylist: test_arraylist.c libcu_utils.a
 
 ../src/libcu_utils.a:
 	cd ../src && make libcu_utils.a && make clean
+
 libcu_utils.a:
 	cp ../src/libcu_utils.a libcu_utils.a 
 

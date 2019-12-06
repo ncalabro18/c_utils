@@ -19,30 +19,34 @@ int main(){
 
 Status testfunc_stack1(CUTests t){
 	
-	int array[] = {10, -2, 6, 12, 7, 7, 72, 55, -3, -4, 96, -41, -83};
+	int array[] = {10, -2, 6, 12, 7, 7, 72, 55, -3, -4, 96, -41, -83, 2,1,3,12,-55,1241,-66};
 	unsigned int arrayCount = sizeof(array) / sizeof(int);
 
-	CUStack stack =  cu_stack_init(sizeof(int), 25);
+	CUStack stack =  cu_stack_init(sizeof(int), 3);
 
 	for(unsigned int i = 0; i < arrayCount; i++){
 		if(cu_stack_push(stack, (byte*) &array[i]) == FAILURE){
-			cu_tests_log(t, "stack1: cu_stack_push FAILURE");
+			cu_tests_log_cstr(t, "stack1: cu_stack_push FAILURE");
 			return FAILURE;
 		}
+	}
+	if(cu_stack_size(stack) != arrayCount){
+		cu_tests_log_cstr(t, "stack1: cu_stack_size(stack) != arrayCount");
+		return FAILURE;
 	}
 
 	for(unsigned int i = 0; i < arrayCount; i++){
 		int *temp = (int*) cu_stack_peek(stack);
 		if(temp == NULL){
-			cu_tests_log(t, "stack1: cu_stack_peek NULL");
+			cu_tests_log_cstr(t, "stack1: cu_stack_peek NULL");
 		       	return FAILURE;
 		}
 		if(*temp != array[arrayCount - i - 1]){
-			cu_tests_log(t, "stack1: *temp != array[i]");
+			cu_tests_log_cstr(t, "stack1: *temp != array[i]");
 			return FAILURE;
 		}
 		if(cu_stack_pop(stack) == FAILURE){
-			cu_tests_log(t, "stack1: cu_stack_pop FAILURE");
+			cu_tests_log_cstr(t, "stack1: cu_stack_pop FAILURE");
 			return FAILURE;
 		}
 	}
