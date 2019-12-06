@@ -1,7 +1,9 @@
 #include "cu_string.h"
+#include "../cu_utils.h"
 #include <stdlib.h>
 #include <limits.h>
 #include <string.h>
+#include <ctype.h>
 
 #define cast(x) ((CU_STRING*)(x))
 #define RESIZE_MODIFIER 2
@@ -50,14 +52,30 @@ CUString cu_string_init_char(char c){
     CU_STRING *str = (CU_STRING*) cu_string_init_capacity(NSTRING_DEFAULT_CAPACITY);
     if(!str) return NULL;
 
-    *(str->data) = c;
-    str->length++;
+    str->data[0] = c;
+    str->length = 1;
 
     return (CUString) str;
 }
 
 CUString cu_string_init_custring(const CUString copy){
     return cu_string_substring(copy, 0, cu_string_length(copy));
+}
+
+CUString cu_string_init_int(int i){
+	CUString str = cu_string_init();
+	if(!str) return NULL;
+
+	while(i > 0){
+		if(cu_string_concat_char(str, (char)((i % 10) + '0')) == FAILURE){
+			perror("cu_string_init_int: cu_string_concat_char FAILURE");
+			return NULL;
+		}
+		i /= 10;
+	}
+	if(cu_string_reverse(str) == FAILURE) return NULL;
+
+	return str;
 }
 
 CUString cu_string_substring(const CUString str, unsigned int a, unsigned int b){
@@ -79,8 +97,48 @@ CUString cu_string_substring(const CUString str, unsigned int a, unsigned int b)
     return (CUString) substr;
 }
 
+CUString cu_string_extract(FILE *file){
+	if(!file)
+		return NULL;
+
+	CUString str = cu_string_init();
+	int c = fgetc(file);
+	do{
+		if(c == EOF){
+			cu_string_destroy(&str);
+			return NULL;
+		}
+		if(!isspace((char)c))
+			break;
+		c = fgetc(file);
+	}while(1);
+	
+	do{
+		if(isspace((char)c))
+			break;
+			
+		if(c == EOF){
+			cu_string_destroy(&str);
+			return NULL;
+		}
+
+		if(cu_string_concat_char(str, (char) c) == FAILURE){
+			cu_string_destroy(&str);
+			return NULL;
+		}
+		c = fgetc(file);
+	}while(1);
+
+
+	ungetc(c, file);
+	return str;
+}
+
 Status cu_string_concat_char(CUString str, char c){
     if(!str) return FAILURE;
+
+    cast(str)->data[cast(str)->length] = c;
+    cast(str)->length++;
 
     return SUCCESS;
 }
@@ -112,6 +170,20 @@ Status cu_string_concat_string(CUString left, const CUString right){
     cast(left)->length += cast(right)->length;
 
     return SUCCESS;
+}
+
+Status cu_string_reverse(CUString str){
+	if(!str) return FAILURE;
+
+	for(int i = 0, j = cast(str)->length - 1; i < j; i++, j--)
+		cuswap_char(cast(str)->data + i, cast(str)->data + j);
+
+	return SUCCESS;
+}
+
+void cu_string_clear(CUString str){
+	if(!str || cast(str)->length == 0) return;
+	cast(str)->length = 0;	
 }
 
 

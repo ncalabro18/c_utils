@@ -9,10 +9,11 @@ typedef struct arraylist {
 	unsigned int itemCount;
 	unsigned int itemCapacity;
 	byte *data;
+
 } ARRAYLIST;
 
 #define RESIZE_MODIFIER 2
-Status cu_arraylist__resize(ARRAYLIST *list, unsigned int newItemCapacity);
+Status cu_arraylist_resize(ARRAYLIST *list, unsigned int newItemCapacity);
 
 CUArrayList cu_arraylist_init(unsigned int bytesPerItem, unsigned int initialItemCapacity) {
 	ARRAYLIST *list = (ARRAYLIST*)malloc(sizeof(ARRAYLIST));
@@ -45,7 +46,7 @@ Status cu_arraylist_set(CUArrayList list, const byte *data, unsigned int index) 
 	if (list == NULL || data == NULL)
 		return FAILURE;
 
-	if (cu_arraylist__resize(list, index + 1) == FAILURE)
+	if (cu_arraylist_resize(list, index + 1) == FAILURE)
 		return FAILURE;
 
 	if(index == cast(list)->itemCount)
@@ -101,13 +102,10 @@ Status cu_arraylist_insertAt(CUArrayList l, const byte *data, unsigned int index
 		return cu_arraylist_set(list, data, index);
 
 
-
 	int signed_index = (int) index;
-
 	for (int i = list->itemCount - 1; i >= signed_index; i--)
         	cu_arraylist_set(list, &(list->data[i * list->bytesPerItem]), i + 1);
 	
-
 
 	return cu_arraylist_set(l, data, index);
 }
@@ -120,17 +118,20 @@ Status cu_arraylist_remove(CUArrayList l, unsigned int index) {
 
 	ARRAYLIST *list = cast(l);
 
-	if (index > list->itemCount) 
+	if (index >= list->itemCount) 
 		return FAILURE;
-	
 
-	memcpy(
-			list->data + index * list->bytesPerItem,
-		       	list->data + index * list->bytesPerItem + list->bytesPerItem,
-		       	list->bytesPerItem * (list->itemCount - index) );//TODO fix & test this mess
-	
-
+	//itemCount updated for size calculation and for the operation
 	list->itemCount--;
+	
+	size_t size = list->bytesPerItem * (list->itemCount - index);
+	if(size > 0)
+		//memmove is safe with overlapping memory addresses
+		memmove( 
+			list->data + (index + 0) * list->bytesPerItem,
+		       	list->data + (index + 1) * list->bytesPerItem,
+		       	size);
+	
 
 	return SUCCESS;
 }
@@ -161,20 +162,20 @@ int cu_arraylist_size(CUArrayList list) {
 }
 
 
-Status cu_arraylist__resize(ARRAYLIST *list, unsigned int newItemCapacity) {
+Status cu_arraylist_resize(ARRAYLIST *list, unsigned int newItemCapacity) {
 	if (list->itemCapacity >= newItemCapacity)
 		return SUCCESS;
 
 
-    byte *temp = realloc(list->data,
-            RESIZE_MODIFIER * list->itemCapacity * list->bytesPerItem);
-    if (temp == NULL)
+    	byte *temp = realloc(list->data,
+		RESIZE_MODIFIER * list->itemCapacity * list->bytesPerItem);
+    	if (temp == NULL)
 	    return FAILURE;
 
-    list->data = temp;
+    	list->data = temp;
 	list->itemCapacity *= RESIZE_MODIFIER;
 
-	return cu_arraylist__resize(list, newItemCapacity);
+	return cu_arraylist_resize(list, newItemCapacity);
 }
 
 byte* cu_arraylist_viewRaw(CUArrayList list){

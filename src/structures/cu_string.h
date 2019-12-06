@@ -19,11 +19,21 @@ CUString cu_string_init_char(char c);
 
 CUString cu_string_init_custring(CUString copy);
 
+CUString cu_string_init_int(int);
+
+//returns new string object from str[a], inclusive, to str[b], exclusive
 CUString cu_string_substring(CUString str, unsigned int a, unsigned int b);
+
+//ignores any leading whitespace characters, then puts the following non-whitespace characters into the string
+//the stream after will be set to the first whitespace character following the extracted characters
+CUString cu_string_extract(FILE *file);
 
 Status cu_string_concat_custring(CUString left, CUString right);
 Status cu_string_concat_char(CUString str, char c);
 Status cu_string_concat_cstr(CUString str, const char *cstr);
+
+Status cu_string_reverse(CUString str);
+void cu_string_clear(CUString str);
 
 char* cu_string_cstr(CUString s);
 

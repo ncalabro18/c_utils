@@ -31,6 +31,8 @@ Status cu_stack_pop(CUStack stack) {
 	
 	int index = cu_arraylist_size(cast(stack)->list) - 1;
 	
+	if(index < 0)
+		return FAILURE;
 	
 	if (cu_arraylist_remove(cast(stack)->list, index) == FAILURE)
 		return FAILURE;
@@ -82,7 +84,7 @@ Boolean cu_stack_isEmpty(CUStack stack) {
 void cu_stack_destroy(CUStack *stack) {
 	if (stack == NULL || *stack == NULL)
 		return;
-    cu_arraylist_destroy(cast(*stack)->list);
+    	cu_arraylist_destroy(&cast(*stack)->list);
 	free(*stack);
 
 	return;
