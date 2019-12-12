@@ -305,6 +305,24 @@ void cuswap_ldouble(long double *a, long double *b){
 }
 
 
+void cuswap_memory(byte *a, byte *b, unsigned int numBytes){
+	byte *temp = (byte*) malloc(numBytes);
+	if(!temp) return;
+	memcpy(temp, a, numBytes);
+	memcpy(a,    b, numBytes);
+	memcpy(b, temp, numBytes);
+	free(temp);
+}
+
+void cuswap_memory_safe(byte *a, byte *b, unsigned int numBytes){
+	byte *temp = (byte*) malloc(numBytes);
+	if(!temp) return;
+	memmove(temp, a, numBytes);
+	memmove(a,    b, numBytes);
+	memmove(b, temp, numBytes);
+	free(temp);
+}
+
 
 void cuprint_setOutput(FILE *filePtr){
 	_cu_globals.cuprint_output = filePtr;

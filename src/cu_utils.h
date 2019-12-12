@@ -7,6 +7,7 @@
 #include "structures/cu_stack.h"
 #include "structures/cu_queue.h"
 #include <stdio.h>
+#include <string.h>
 
 
 //returns the first occurence of the number in the array of length arrayCount
@@ -61,6 +62,7 @@ void cusort_selection_double(double *array, unsigned int arrayCount);
 void cusort_selection_ldouble(long double *array, unsigned int arrayCount);
 
 void cusort_merge_int(int *array, unsigned int arrayCount);
+
 /*
 void cusort_merge_uint(unsigned int *array, unsigned int arrayCount);
 void cusort_merge_char(char *array, unsigned int arrayCount);
@@ -87,6 +89,9 @@ void cuswap_float(float *a, float *b);
 void cuswap_double(double *a, double *b);
 void cuswap_ldouble(long double *a, long double *b);
 
+void cuswap_memory(byte *a, byte *b, unsigned int size);
+void cuswap_memory_safe(byte *a, byte *b, unsigned int size);
+
 //change output for cuprint functions to the given file stream
 void cuprint_setOutput(FILE*);
 
@@ -103,6 +108,19 @@ void cuprint_array_float(float *array, unsigned int arrayCount);
 void cuprint_array_double(double *array, unsigned int arrayCount);
 void cuprint_array_ldouble(long double *array, unsigned int arrayCount);
 
+/*
+int* cumake_randomArray_int(unsigned int arrayCount);
+unsigned int* cumake_randomArray_uint(unsigned int arrayCount);
+char* cumake_randomArray_char(unsigned int arrayCount);
+cumake_randomArray_uchar(unsigned int arrayCount);
+cumake_randomArray_short(unsigned int arrayCount);
+cumake_randomArray_ushort(unsigned int arrayCount);
+cumake_randomArray_long(unsigned int arrayCount);
+cumake_randomArray_ulong(unsigned int arrayCount);
+cumake_randomArray_float(unsigned int arrayCount);
+cumake_randomArray_double(unsigned int arrayCount);
+cumake_randomArray_ldouble(unsigned int arrayCount);
+*/
 
 //accurate equivalence testing for floating types
 Boolean cucmp_float(float a, float b);

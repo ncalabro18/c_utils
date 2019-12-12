@@ -1,6 +1,6 @@
 CC = gcc
-FLAGS = -Wall -g -Wno-unused-function
-OBJECTS = cu_utils.o cu_arraylist.o cu_string.o cu_queue.o cu_stack.o cu_tests.o
+FLAGS = -Wall -g -lm -Wno-unused-function
+OBJECTS = cu_utils.o cu_arraylist.o cu_string.o cu_queue.o cu_stack.o cu_tests.o cu_heap.o
 LIB =  libcu_utils.a
 
 
@@ -25,6 +25,9 @@ cu_queue.o: structures/cu_queue.c
 
 cu_stack.o: structures/cu_stack.c
 	$(CC) $(FLAGS) -c structures/cu_stack.c -o cu_stack.o
+
+cu_heap.o: structures/cu_heap.c
+	$(CC) $(FLAGS) -c structures/cu_heap.c -o cu_heap.o
 
 clean:
 	rm $(OBJECTS) $(LIB)

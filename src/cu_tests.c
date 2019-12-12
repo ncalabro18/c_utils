@@ -5,13 +5,14 @@
 #define CU_TESTS_INITIAL_FUNCTION_CAPACITY 8
 #define CU_TESTS_VERSION 0.30
 
+void clearbuffer(FILE *f);
 
 typedef struct CU_TESTS{
+	FILE *input;
 	FILE *output;
 	CUArrayList functions;
 	CUString errorLog;
 
-	//contains all the indices of the tests that failed after cu_tests_test run
 	CUArrayList results;
 
 	Boolean initError;
@@ -24,7 +25,7 @@ CUTests cu_tests_init(){
 	CU_TESTS *ut = (struct CU_TESTS*) malloc(sizeof(CU_TESTS));
 	if(!ut) return NULL;
 
-
+	//1 << 10 ~= 1000
 	ut->errorLog = cu_string_init_capacity(1 << 10);
 	if(!ut->errorLog){
 		free(ut);
@@ -41,24 +42,18 @@ CUTests cu_tests_init(){
 
 	ut->functions = cu_arraylist_init(sizeof(Status (*)(char *, unsigned int)), CU_TESTS_INITIAL_FUNCTION_CAPACITY);
 	if(!ut->functions){
-        cu_arraylist_destroy(&ut->results);
+        	cu_arraylist_destroy(&ut->results);
 		cu_string_destroy(&ut->errorLog);
 		free(ut);
 		return NULL;
 	}
 
 		
+	ut->input = stdin;
 	ut->output = stdout;
 	ut->currentTest = -1;
 	ut->initError = FALSE;
 	return ut;
-}
-	
-
-void cu_tests_setOutput(CUTests ut, FILE* file){
-	if(!ut || !file) return;
-
-	cast(ut)->output = file;
 }
 
 
@@ -89,14 +84,12 @@ Status cu_tests_test(CUTests t){
 		return FAILURE;
 	}
 
-
 	int funcCount = cu_arraylist_size(ut->functions);
-	Status(**functions)(CUTests) = (Status(**)(CUTests)) cu_arraylist_viewRaw(ut->functions);
-
 	if(funcCount <= 0){
-		fprintf(ut->output, "No functions found.\n");
+		perror("No functions found.\n");
 		return FAILURE;
 	}
+	Status(**functions)(CUTests) = (Status(**)(CUTests)) cu_arraylist_viewRaw(ut->functions);
 
 
 	fprintf(ut->output, "\nCUTests Version %.2f\n", CU_TESTS_VERSION);
@@ -132,80 +125,118 @@ Status cu_tests_test(CUTests t){
 	return FAILURE;
 }
 
-#define PARSE_BUFFER_LENGTH 1024
-byte parseBuffer[PARSE_BUFFER_LENGTH];
+void cu_tests_log(CUTests t){
+	if(!t) return;
 
-void cu_tests_log(CUTests t, CUString msg){
-	if(!t || !msg) return;
+	cu_string_print(cast(t)->errorLog, cast(t)->output);
+	cu_tests_log_clear(t);
+}
 
-	cu_string_print(msg, cast(t)->output);
+void cu_tests_log_custring(CUTests t, CUString str){
+	if(!t || !str) return;
+
+	if(cu_string_concat_custring(cast(t)->errorLog, str) == FAILURE)
+		perror("cu_tests_log_custring: cu_string_concat_custring FAILURE");
 }
 void cu_tests_log_cstr(CUTests t, const char *msg){
 	if(!t || !msg) return;
 
 	if(cu_string_concat_cstr(cast(t)->errorLog, msg) == FAILURE){
 		perror("cu_tests_log: cu_string_concat_cstr FAILURE");
+		exit(-2);
 	}
 }
 
 void cu_tests_log_int(CUTests t, int num){
 	if(!t) return;
-	int len = 0;
-	while(num > 0 && len < PARSE_BUFFER_LENGTH - 1){
-		char c = (char) (num % 10) + '0';
-		parseBuffer[len] = c;
-		num /= 10;
-		len++;
-	}	
-	parseBuffer[len] = '\0';
-	if(cu_string_concat_cstr(cast(t)->errorLog, parseBuffer) == FAILURE)
+	CUString s = cu_string_init_int(num);
+	if(cu_string_concat_custring(cast(t)->errorLog, s) == FAILURE){
 		perror("cu_tests_log_int: cu_string_concat_cstr FAILURE");
+		exit(-2);
+	}
+	cu_string_destroy(&s);
 }
 void cu_tests_log_uint(CUTests t, unsigned int num){
 	if(!t) return;
-	int len = 0;
-	while(num > 0 && len < PARSE_BUFFER_LENGTH - 1){
-		char c = (char) (num % 10) + '0';
-		parseBuffer[len] = c;
-		num /= 10;
-		len++;
-	}
-	parseBuffer[len] = '\0';
-	if(cu_string_concat_cstr(cast(t)->errorLog, parseBuffer) == FAILURE)
+	CUString s = cu_string_init_uint(num);
+	if(cu_string_concat_cstr(cast(t)->errorLog, s) == FAILURE){
 		perror("cu_tests_log_uint: cu_string_concat_cstr FAILURE");
+		exit(-2);
+	}
+	cu_string_destroy(&s);
 }
 
 void cu_tests_log_char(CUTests t, char c){
-	if(!t) return;
-	
-	if(cu_string_concat_char(cast(t)->errorLog, c) == FAILURE)
+	if(!t) return;	
+	if(cu_string_concat_char(cast(t)->errorLog, c) == FAILURE){
 		perror("cu_tests_log_char: cu_string_concat_char FAILURE");
+		exit(-2);
+	}
 }
 void cu_tests_log_float(CUTests t, float num){
 	if(!t) return;
-	if(sprintf(parseBuffer, "%f", num) >= PARSE_BUFFER_LENGTH )
-		exit(-1);//should exit if theres a buffer overflow
+	CUString s = cu_string_init_float(num);
+	if(cu_string_concat_custring(cast(t)->errorLog, s) == FAILURE){
+		perror("cu_tests_log_float: cu_string_concat_custring");
+		exit(-2);
+	}
+	cu_string_destroy(&s);
 }
 void cu_tests_log_double(CUTests t, double num){
 	if(!t) return;
-	if(sprintf(parseBuffer, "%lf", num) >= PARSE_BUFFER_LENGTH )
-		exit(-1);//should exit if theres a buffer overflow
+	CUString s = cu_string_init_double(num);
+	if(cu_string_concat_custring(cast(t)->errorLog, s) == FAILURE){
+		perror("cu_tests_log_float: cu_string_concat_custring");
+		exit(-2);
+	}
+	cu_string_destroy(&s);
 }
+
+void cu_tests_log_newline(CUTests t){
+	if(!t) return;
+	cu_tests_log_cstr(t, "\t<Test ");
+	cu_tests_log_uint(t, cast(t)->currentTest);
+	cu_tests_log_cstr(t, ">: ");
+}
+
 void cu_tests_log_clear(CUTests t){
 	if(!t) return;
 	cu_string_clear(cast(t)->errorLog);
 }
 
-void cu_tests_log_newline(CUTests t){
-	if(!t) return;
+Status cu_tests_log_verify(CUTests t){
+	if(!t) return FAILURE;
+	cu_tests_log(t);
+	while(1){
+		cu_tests_log_newline(t);
+		cu_tests_log_cstr(t, "veriy( y/n or s/f ): ");
+		cu_tests_log(t);
 	
-	fprintf(cast(t)->output, "\n<Test %d>", cast(t)->currentTest);		
+		int c = fgetc(cast(t)->input);
+		clearbuffer(cast(t)->input);
+		if(c != 'y' || c != 'Y' || c != 'n' || c != 'N' ||
+		   c != 's' || c != 'S' || c != 'f' || c != 'F')
+			continue;
+
+		return (c == 'y' || c == 'Y' || c == 's' || c == 'S') ? SUCCESS : FAILURE;
+	}
+	return FAILURE;
 }
+
 
 CUArrayList cu_tests_results(CUTests t){
 	if(!t)
 		return NULL;
 	return cast(t)->results;
+}
+
+void cu_tests_setOutput(CUTests ut, FILE* file){
+	if(!ut || !file) return;
+	cast(ut)->output = file;
+}
+void cu_tests_setInput(CUTests ut, FILE* file){
+	if(!ut || !file) return;
+	cast(ut)->input = file;
 }
 
 void cu_tests_destroy(CUTests* pt){
@@ -215,7 +246,11 @@ void cu_tests_destroy(CUTests* pt){
 	cu_string_destroy(&cast(*pt)->errorLog);
  	cu_arraylist_destroy(&cast(*pt)->results);
     	cu_arraylist_destroy(&cast(*pt)->functions);
+
 	free(*pt);
 	*pt = NULL;
 }
 
+void clearbuffer(FILE *f){
+	while(fgetc(f) != '\n') {}
+}

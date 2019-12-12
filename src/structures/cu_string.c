@@ -4,6 +4,7 @@
 #include <limits.h>
 #include <string.h>
 #include <ctype.h>
+#include <math.h>
 
 #define cast(x) ((CU_STRING*)(x))
 #define RESIZE_MODIFIER 2
@@ -62,19 +63,82 @@ CUString cu_string_init_custring(const CUString copy){
     return cu_string_substring(copy, 0, cu_string_length(copy));
 }
 
-CUString cu_string_init_int(int i){
+CUString cu_string_init_int(int num){
+	if(num == 0)
+		return cu_string_init_char('0');
+	Boolean is_signed = num < 0;
+	CUString str = cu_string_init();
+	if(!str) return NULL;
+	
+
+	while(num != 0){
+		int c = num % 10;
+		if(is_signed) c *= -1;
+		
+
+		if(cu_string_concat_char(str, (char)(c + '0')) == FAILURE){
+			return NULL;
+		}
+		num /= 10;
+	}
+	if(is_signed)
+		if(cu_string_concat_char(str, '-') == FAILURE){
+			return NULL;
+		}
+	if(cu_string_reverse(str) == FAILURE) return NULL;
+
+	return str;
+}
+
+CUString cu_string_init_uint(unsigned int num){
 	CUString str = cu_string_init();
 	if(!str) return NULL;
 
-	while(i > 0){
-		if(cu_string_concat_char(str, (char)((i % 10) + '0')) == FAILURE){
-			perror("cu_string_init_int: cu_string_concat_char FAILURE");
+	while(num > 0){
+		if(cu_string_concat_char(str, (char)((num % 10) + '0')) == FAILURE){
 			return NULL;
 		}
-		i /= 10;
+		num /= 10;
 	}
 	if(cu_string_reverse(str) == FAILURE) return NULL;
 
+	return str;
+}
+
+CUString cu_string_init_float(float num){
+	return cu_string_init_double(num);
+}
+CUString cu_string_init_double(double num){
+	CUString str = cu_string_init_capacity(0x10);
+	Boolean is_signed = FALSE;
+	if(num < 0.0)
+		is_signed = TRUE;
+	long whole = (long) num;
+	double f = num - whole;
+	
+	while(whole > 0){
+		if(cu_string_concat_char(str, (whole % 10) + '0') == FAILURE)
+			return NULL;
+		whole /= 10;
+	}
+	if(is_signed)
+		if(cu_string_concat_char(str, '-') == FAILURE)
+			return NULL;
+
+	if(cu_string_reverse(str) == FAILURE)
+		return NULL;
+
+	if(f > 0.001)
+		if(cu_string_concat_char(str, '.') == FAILURE)
+			return NULL;
+
+	while(f > 0.001){
+		f *= 10;
+		int digit = ((int)f) % 10;
+		f -= digit;
+		if(cu_string_concat_char(str, (char) digit + '0') == FAILURE)
+			return NULL;
+	}
 	return str;
 }
 
@@ -231,23 +295,37 @@ char* cu_string_cstr(CUString str){
     return cast(str)->data;
 }
 
+#define CU_STRING_CONTAINS_CODE(str1, str2, str2_length, str2jget)\
+	if(!str1 || !str2) return -2;\
+	for(unsigned int i = 0; i < cast(str1)->length - str2_length; i++){\
+        for(j = 0; j < str2_length; j++) {\
+        	if (cast(str1)->data[i + j] != str2jget)\
+                break;\
+        }\
+        if(j == str2_length)\
+            return i;\
+	}\
+	return -1;\
 
-Boolean cu_string_contains(const CUString str1, const CUString str2){
-    if(!str1 || !str2)
-        return FALSE;
 
-    for(int i = 0; i < cast(str1)->length - cast(str2)->length; i++){
-        int j;
-        for(j = 0; j < cast(str2)->length; j++) {
-            if (cast(str1)->data[i + j] != cast(str2)->data[j])
-                break;
-        }
-        if(j == cast(str2)->length)
-            return TRUE;
-    }
-
-    return FALSE;
+int cu_string_contains_custring(const CUString str1, const CUString str2){
+	unsigned int j;
+	CU_STRING_CONTAINS_CODE(str1, str2, cast(str2)->length, cast(str2)->data[j])
 }
+
+int cu_string_contains_cstr(const CUString str, const char *cstr){	
+	unsigned int j;
+	CU_STRING_CONTAINS_CODE(str, cstr, strlen(cstr), cstr[j])
+}
+
+int cu_string_contains_char(CUString str, char c){
+	if(!str) return -2;
+	for(unsigned int i = 0; i < cast(str)->length; i++)
+		if(cast(str)->data[i] == c)
+			return i;
+	return -1;
+}
+
 
 Status cu_string_print(const CUString str, FILE* file){
     if(!str || !file)

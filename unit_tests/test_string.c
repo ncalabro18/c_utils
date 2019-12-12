@@ -3,7 +3,9 @@
 #include <string.h>
 
 
-Status testfunc_string_init_int(CUTests t);
+Status testfunc_string_init_int1(CUTests t);
+Status testfunc_string_init_int2(CUTests t);
+Status testfunc_string_init_uint1(CUTests t);
 Status testfunc_string_setSegment(CUTests t);
 Status testfunc_string_cmp(CUTests t);
 Status testfunc_string_substring(CUTests t);
@@ -13,34 +15,26 @@ int main(void){
 
 	CUTests tests = cu_tests_init();
 
-	cu_tests_addTest(tests, testfunc_string_init_int);
+	
 	cu_tests_addTest(tests, testfunc_string_setSegment);
 	cu_tests_addTest(tests, testfunc_string_cmp);
 	cu_tests_addTest(tests, testfunc_string_substring);
   	cu_tests_addTest(tests, testfunc_string_concat);
+	cu_tests_addTest(tests, testfunc_string_init_int1);
+	cu_tests_addTest(tests, testfunc_string_init_int2);
+	cu_tests_addTest(tests, testfunc_string_init_uint1);
+	 
 
 	cu_tests_test(tests);
 
 	cu_tests_destroy(&tests);
 
-	/*
-	CUString s = cu_string_init_cstr("hello, world");
-
-	if(cu_string_setSegment(s, 3, 6, "foobar") == FAILURE){
-		printf("FAILURE\n");
-		return -1;
-	}
-
-	cu_string_print(s, stdout);
-
-	cu_string_destroy(&s);
-	*/
 
 	return 0;
 }
 
 
-Status testfunc_string_init_int(CUTests t){
+Status testfunc_string_init_int1(CUTests t){
 
 
 	CUString s1 = cu_string_init_int(5);
@@ -287,4 +281,85 @@ Status testfunc_string_concat(CUTests t){
     return SUCCESS;
 }
 
+Status testfunc_string_init_int_helper2(CUTests t, int test, const char *compareTo){
+	if(!t || !compareTo) return FAILURE;
+	CUString str_test = cu_string_init_int(test);
+	if(str_test == NULL){
+		cu_tests_log_cstr(t, "testfunc_string_init_int_helper: cu_string_init_int NULL");
+		return FAILURE;
+	}
+	char *cstr_test = cu_string_cstr(str_test);
+	if(cstr_test == NULL){
+		cu_tests_log_cstr(t, "testfunc_string_init_int_helper: cu_string_cstr  NULL");       
+		return FAILURE;
+	}
+	int result = strcmp(cstr_test, compareTo);
+	if(result != 0){
+		//normally would use log_int, but log_int relies on these tests
+		cu_tests_log_cstr(t, "testfun_string_init_int_helper: result != 0");
+		return FAILURE;
+	}
+	cu_string_destroy(&str_test);
+	return SUCCESS;
+}
+
+Status testfunc_string_init_int2(CUTests t){
+
+	 if(testfunc_string_init_int_helper2(t, 4, "4") == FAILURE) return FAILURE;
+	 if(testfunc_string_init_int_helper2(t, -7, "-7") == FAILURE) return FAILURE;
+	 if(testfunc_string_init_int_helper2(t, -671294, "-671294") == FAILURE) return FAILURE;
+	 if(testfunc_string_init_int_helper2(t, 97562, "97562") == FAILURE) return FAILURE;
+	 if(testfunc_string_init_int_helper2(t, 12345678, "12345678") == FAILURE) return FAILURE;
+	 if(testfunc_string_init_int_helper2(t, -1, "-1") == FAILURE) return FAILURE;
+	 if(testfunc_string_init_int_helper2(t, 0, "0") == FAILURE) return FAILURE;
+	 if(testfunc_string_init_int_helper2(t, 9911552, "9911552") == FAILURE) return FAILURE;
+	 if(testfunc_string_init_int_helper2(t, 771, "771") == FAILURE) return FAILURE;
+	 if(testfunc_string_init_int_helper2(t, -2761, "-2761") == FAILURE) return FAILURE;
+	 if(testfunc_string_init_int_helper2(t, 40285, "40285") == FAILURE) return FAILURE;	
+
+	return SUCCESS;
+}
+
+Status testfunc_string_init_uint_helper1(CUTests t, unsigned int test, const char *compareTo){
+	if(!t || !compareTo) return FAILURE;
+	CUString str_test = cu_string_init_int(test);
+	if(str_test == NULL){
+		cu_tests_log_cstr(t, "testfunc_string_init_int_helper: cu_string_init_int NULL");
+		return FAILURE;
+	}
+	char *cstr_test = cu_string_cstr(str_test);
+	if(cstr_test == NULL){
+		cu_tests_log_cstr(t, "testfunc_string_init_int_helper: cu_string_cstr  NULL");       
+		return FAILURE;
+	}
+	int result = strcmp(cstr_test, compareTo);
+	if(result != 0){
+		//normally would use log_uint, but log_uint relies on these tests
+		cu_tests_log_cstr(t, "testfun_string_init_int_helper: result != 0");
+		return FAILURE;
+	}
+	cu_string_destroy(&str_test);
+	return SUCCESS;
+}
+
+
+Status testfunc_string_init_uint1(CUTests t){
+
+	 if(testfunc_string_init_uint_helper1(t, 4, "4") == FAILURE) return FAILURE;
+	 if(testfunc_string_init_uint_helper1(t, 7, "7") == FAILURE) return FAILURE;
+	 if(testfunc_string_init_uint_helper1(t, 671294, "671294") == FAILURE) return FAILURE;
+	 if(testfunc_string_init_uint_helper1(t, 97562, "97562") == FAILURE) return FAILURE;
+	 if(testfunc_string_init_uint_helper1(t, 12345678, "12345678") == FAILURE) return FAILURE;
+	 if(testfunc_string_init_uint_helper1(t, 1, "1") == FAILURE) return FAILURE;
+	 if(testfunc_string_init_uint_helper1(t, 0, "0") == FAILURE) return FAILURE;
+	 if(testfunc_string_init_uint_helper1(t, 9911552, "9911552") == FAILURE) return FAILURE;
+	 if(testfunc_string_init_uint_helper1(t, 771, "771") == FAILURE) return FAILURE;
+	 if(testfunc_string_init_uint_helper1(t, 2761, "2761") == FAILURE) return FAILURE;
+	 if(testfunc_string_init_uint_helper1(t, 771, "771") == FAILURE) return FAILURE;
+	 if(testfunc_string_init_uint_helper1(t, 1271271, "1271271") == FAILURE) return FAILURE;
+	 if(testfunc_string_init_uint_helper1(t, 237661, "237661") == FAILURE) return FAILURE;
+	 if(testfunc_string_init_uint_helper1(t, 72661, "72661") == FAILURE) return FAILURE;
+
+	 return SUCCESS;
+}
 

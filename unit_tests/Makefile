@@ -1,10 +1,16 @@
 CC = gcc
 FLAGS = -Wall -g -I../src libcu_utils.a
 LINK = libcu_utils.a
-TESTS = test_sort test_queue test_string test_arraylist test_stack test
+TESTS = test_sort test_queue test_string test_arraylist test_stack test_merge test_heap test
 
 test: test.c libcu_utils.a
 	$(CC $(FLAGS) test.c -o test $(LINK)
+
+test_merge: test_merge.c libcu_utils.a
+	$(CC) $(FLAGS) test_merge.c -o test_merge $(LINK)
+
+test_heap: test_heap.c libcu_utils.a
+	$(CC) $(FLAGS) test_heap.c -o test_heap $(LINK)
 
 test_sort: test_sort.c libcu_utils.a
 	$(CC) $(FLAGS) test_sort.c -o test_sort $(LINK)
