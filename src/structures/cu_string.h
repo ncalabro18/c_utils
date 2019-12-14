@@ -14,6 +14,7 @@ CUString cu_string_init();
 CUString cu_string_init_cstr(const char *c_str);
 CUString cu_string_init_capacity(unsigned int capacity);
 CUString cu_string_init_char(char c);
+CUString cu_string_init_charArray(const char *c, unsigned int length);
 CUString cu_string_init_custring(CUString copy);
 
 //creates a string object with the text representation of the data type

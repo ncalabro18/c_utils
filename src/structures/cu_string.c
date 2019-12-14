@@ -59,6 +59,18 @@ CUString cu_string_init_char(char c){
     return (CUString) str;
 }
 
+CUString cu_string_init_charArray(const char *charArray, unsigned int length){
+	CU_STRING *str = (CU_STRING*) cu_string_init_capacity(length + 1);
+	if(!str) return NULL;
+	
+	memcpy(str->data, charArray, length);
+	str->length = length;
+	str->capacity = length + 1;
+
+	return str;
+}
+
+
 CUString cu_string_init_custring(const CUString copy){
     return cu_string_substring(copy, 0, cu_string_length(copy));
 }
