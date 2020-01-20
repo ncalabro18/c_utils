@@ -8,6 +8,7 @@
 - CUStack
 - CUQueue
 - CUHeap
+- CUHashMap
 
 ## Algorithms
 - Basic search/search functions under c_utils.h
