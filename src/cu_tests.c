@@ -194,7 +194,7 @@ void cu_tests_log_double(CUTests t, double num){
 
 void cu_tests_log_newline(CUTests t){
 	if(!t) return;
-	cu_tests_log_cstr(t, "\t<Test ");
+	cu_tests_log_cstr(t, "\n\t<Test ");
 	cu_tests_log_uint(t, cast(t)->currentTest);
 	cu_tests_log_cstr(t, ">: ");
 }
@@ -214,12 +214,13 @@ Status cu_tests_log_verify(CUTests t){
 	
 		int c = fgetc(cast(t)->input);
 		clearbuffer(cast(t)->input);
-		if(c != 'y' || c != 'Y' || c != 'n' || c != 'N' ||
-		   c != 's' || c != 'S' || c != 'f' || c != 'F')
+		if(c != 'y' && c != 'Y' && c != 'n' && c != 'N' &&
+		   c != 's' && c != 'S' && c != 'f' && c != 'F')
 			continue;
 
 		return (c == 'y' || c == 'Y' || c == 's' || c == 'S') ? SUCCESS : FAILURE;
 	}
+
 	return FAILURE;
 }
 
