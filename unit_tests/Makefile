@@ -1,7 +1,7 @@
 CC = gcc
 FLAGS = -Wall -g -I../src libcu_utils.a
 LINK = libcu_utils.a
-TESTS = test_sort test_queue test_string test_arraylist test_stack test_merge test_heap test
+TESTS = test_sort test_queue test_string test_arraylist test_stack test_merge test_heap test_hashmap test
 
 test: test.c libcu_utils.a
 	$(CC $(FLAGS) test.c -o test $(LINK)
@@ -26,6 +26,9 @@ test_string: test_string.c libcu_utils.a
 
 test_arraylist: test_arraylist.c libcu_utils.a
 	$(CC) $(FLAGS) test_arraylist.c -o test_arraylist $(LINK)
+
+test_hashmap: test_hashmap.c libcu_utils.a
+	$(CC) $(FLAGS) test_hashmap.c -o test_hashmap $(LINK)
 
 ../src/libcu_utils.a:
 	cd ../src && make libcu_utils.a && make clean

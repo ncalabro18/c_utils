@@ -359,6 +359,7 @@ Status testfunc_string_init_uint1(CUTests t){
 	 if(testfunc_string_init_uint_helper1(t, 1271271, "1271271") == FAILURE) return FAILURE;
 	 if(testfunc_string_init_uint_helper1(t, 237661, "237661") == FAILURE) return FAILURE;
 	 if(testfunc_string_init_uint_helper1(t, 72661, "72661") == FAILURE) return FAILURE;
+	 if(testfunc_string_init_uint_helper1(t, 621251244, "621251244") == FAILURE) return FAILURE;
 
 	 return SUCCESS;
 }
