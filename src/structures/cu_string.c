@@ -390,6 +390,16 @@ Status cu_string_resize(CUString str, unsigned int minimumCapacity){
         return SUCCESS;
 }
 
+int cu_string_asciiSum(CUString str){
+	if(str == NULL)
+		return -1;
+
+	int sum = 0;
+	for(int i = 0; i < cast(str)->length; i++)
+		sum += cast(str)->data[i];
+	return sum;
+}
+
 void cu_string_destroy(CUString *s){
     if(!s || !*s) return;
 

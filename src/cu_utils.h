@@ -1,11 +1,16 @@
 #ifndef C_UTILS_H
 #define C_UTILS_H
 
+
+//all includes to allow all functions from one include directive
 #include "cu_tests.h"
 #include "structures/cu_arraylist.h"
 #include "structures/cu_string.h"
 #include "structures/cu_stack.h"
 #include "structures/cu_queue.h"
+#include "structures/cu_heap.h"
+#include "structures/cu_hashmap.h"
+
 #include <stdio.h>
 #include <string.h>
 
@@ -89,6 +94,7 @@ void cuswap_float(float *a, float *b);
 void cuswap_double(double *a, double *b);
 void cuswap_ldouble(long double *a, long double *b);
 
+//swaps size bytes at a and b
 void cuswap_memory(byte *a, byte *b, unsigned int size);
 void cuswap_memory_safe(byte *a, byte *b, unsigned int size);
 
@@ -129,3 +135,4 @@ Boolean cucmp_ldouble(long double a, long double b);
 
 
 #endif
+

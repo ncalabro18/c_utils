@@ -69,6 +69,8 @@ Status cu_string_setChar(CUString str, char c, unsigned int index); //index must
 //returns the number of characters stored in the string
 int cu_string_length(CUString str);
 
+int cu_string_asciiSum(CUString str);
+
 //on SUCCESS, resizes the given string to at least minimumCapacity
 Status cu_string_resize(CUString str, unsigned int minimumCapacity);
 
