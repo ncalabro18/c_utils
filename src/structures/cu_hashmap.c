@@ -266,28 +266,36 @@ int cu_hashmap_hashfunction(struct CU_HASHMAP *map, int code){
 int cu_hashmap_hashcode_int(byte* p){
 	return *(int*)p;
 }
-int cu_hashmap_hashcode_uint(byte* p);
+int cu_hashmap_hashcode_uint(byte* p){
 	return *(unsigned int*)p;
 }
-int cu_hashmap_hashcode_char(byte* p);
+int cu_hashmap_hashcode_char(byte* p){
+	return (int)*p;
+}
+int cu_hashmap_hashcode_uchar(byte* p){
 	return *(int*)p;
 }
-int cu_hashmap_hashcode_uchar(byte* p);
+int cu_hashmap_hashcode_short(byte* p){
+	return (int)*p;
+}
+int cu_hashmap_hashcode_ushort(byte* p){
+	return (int)*p;
+}
+int cu_hashmap_hashcode_long(byte* p){
 	return *(int*)p;
 }
-int cu_hashmap_hashcode_short(byte* p);
+int cu_hashmap_hashcode_ulong(byte* p){
 	return *(int*)p;
 }
-int cu_hashmap_hashcode_ushort(byte* p);
+int cu_hashmap_hashcode_float(byte* p){
 	return *(int*)p;
 }
-int cu_hashmap_hashcode_long(byte* p);
+int cu_hashmap_hashcode_double(byte* p){
 	return *(int*)p;
 }
-int cu_hashmap_hashcode_ulong(byte* p);
-int cu_hashmap_hashcode_float(byte* p);
-int cu_hashmap_hashcode_double(byte* p);
-int cu_hashmap_hashcode_ldouble(byte* p);
+int cu_hashmap_hashcode_ldouble(byte* p){
+	return *(int*)p;
+}
 int cu_hashmap_hashcode_custring(byte* p){
 	return cu_string_asciiSum((CUString) p);
 }
