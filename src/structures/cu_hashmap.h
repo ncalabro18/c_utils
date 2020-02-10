@@ -45,5 +45,17 @@ Status cu_hashmap_print(CUHashMap, FILE*);
 void cu_hashmap_destroy(CUHashMap*);
 
 
+int cu_hashmap_hashcode_int(byte*);
+int cu_hashmap_hashcode_uint(byte*);
+int cu_hashmap_hashcode_char(byte*);
+int cu_hashmap_hashcode_uchar(byte*);
+int cu_hashmap_hashcode_short(byte*);
+int cu_hashmap_hashcode_ushort(byte*);
+int cu_hashmap_hashcode_long(byte*);
+int cu_hashmap_hashcode_ulong(byte*);
+int cu_hashmap_hashcode_float(byte*);
+int cu_hashmap_hashcode_double(byte*);
+int cu_hashmap_hashcode_custring(byte*);
+
 #endif
 

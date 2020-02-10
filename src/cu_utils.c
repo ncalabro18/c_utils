@@ -306,7 +306,7 @@ void cuswap_ldouble(long double *a, long double *b){
 
 
 void cuswap_memory(byte *a, byte *b, unsigned int numBytes){
-	byte *temp = (byte*) malloc(numBytes);
+	byte *temp = (byte*) alloca(numBytes);
 	if(!temp) return;
 	memcpy(temp, a, numBytes);
 	memcpy(a,    b, numBytes);
@@ -315,7 +315,7 @@ void cuswap_memory(byte *a, byte *b, unsigned int numBytes){
 }
 
 void cuswap_memory_safe(byte *a, byte *b, unsigned int numBytes){
-	byte *temp = (byte*) malloc(numBytes);
+	byte *temp = (byte*) alloca(numBytes);
 	if(!temp) return;
 	memmove(temp, a, numBytes);
 	memmove(a,    b, numBytes);

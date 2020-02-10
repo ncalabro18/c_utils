@@ -1,4 +1,6 @@
 #include "cu_hashmap.h"
+//needed for CUString default hashcode function
+#include "cu_string.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -259,5 +261,42 @@ struct link* makeLink(byte* k, byte* v, unsigned int ck, unsigned int cv, int co
 
 int cu_hashmap_hashfunction(struct CU_HASHMAP *map, int code){
 	return code % map->capacity;
+}
+
+int cu_hashmap_hashcode_int(byte* p){
+	return *(int*)p;
+}
+int cu_hashmap_hashcode_uint(byte* p){
+	return *(unsigned int*)p;
+}
+int cu_hashmap_hashcode_char(byte* p){
+	return (int)*p;
+}
+int cu_hashmap_hashcode_uchar(byte* p){
+	return *(int*)p;
+}
+int cu_hashmap_hashcode_short(byte* p){
+	return (int)*p;
+}
+int cu_hashmap_hashcode_ushort(byte* p){
+	return (int)*p;
+}
+int cu_hashmap_hashcode_long(byte* p){
+	return *(int*)p;
+}
+int cu_hashmap_hashcode_ulong(byte* p){
+	return *(int*)p;
+}
+int cu_hashmap_hashcode_float(byte* p){
+	return *(int*)p;
+}
+int cu_hashmap_hashcode_double(byte* p){
+	return *(int*)p;
+}
+int cu_hashmap_hashcode_ldouble(byte* p){
+	return *(int*)p;
+}
+int cu_hashmap_hashcode_custring(byte* p){
+	return cu_string_asciiSum((CUString) p);
 }
 
