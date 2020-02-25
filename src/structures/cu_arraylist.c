@@ -196,3 +196,4 @@ void cu_arraylist_destroy(CUArrayList *list) {
 	*list = NULL;
 	return;
 }
+

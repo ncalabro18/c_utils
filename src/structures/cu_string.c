@@ -282,6 +282,35 @@ Status cu_string_concat_custring(CUString left, const CUString right){
     return SUCCESS;
 }
 
+//variables needed just for a return pointer, that way no deallocating needed
+static int parseIntReturn;
+
+int* cu_string_parse_int(CUString str){
+	if(str == NULL)
+		return NULL;
+
+	parseIntReturn = 0;
+	int digit = 0;
+
+	for(int i = cast(str)->length - 1; i > 0 ; i--, digit++){
+		char c = cast(str)->data[i];
+			if(isdigit(c))
+				if(digit != 0)
+					parseIntReturn += (c - '0') * (digit * 10);
+				else
+					parseIntReturn += (c - '0');
+			else
+				return NULL;
+	}
+	if(cast(str)->data[0] == '-')
+		parseIntReturn *= -1;
+	else
+		parseIntReturn += (cast(str)->data[0] - '0') * (digit * 10);
+
+
+	return &parseIntReturn;
+}
+		
 Status cu_string_reverse(CUString str){
 	if(!str) return FAILURE;
 

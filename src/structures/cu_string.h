@@ -38,6 +38,8 @@ Status cu_string_concat_custring(CUString left, CUString right);
 Status cu_string_concat_cstr(CUString str, const char *cstr);
 Status cu_string_concat_char(CUString str, char c);
 
+//parses a string
+int* cu_string_parse_int(CUString str);
 
 Status cu_string_reverse(CUString str);
 

@@ -3,6 +3,7 @@
 
 #include "../util.h"
 
+
 typedef void* CUArrayList;
 
 //function to create a handle to an CUArrayList object
