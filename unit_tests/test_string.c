@@ -10,6 +10,7 @@ Status testfunc_string_setSegment(CUTests t);
 Status testfunc_string_cmp(CUTests t);
 Status testfunc_string_substring(CUTests t);
 Status testfunc_string_concat(CUTests t);
+Status testfunc_string_parse_int(CUTests t);
 
 int main(void){
 
@@ -23,6 +24,8 @@ int main(void){
 	cu_tests_addTest(tests, testfunc_string_init_int1);
 	cu_tests_addTest(tests, testfunc_string_init_int2);
 	cu_tests_addTest(tests, testfunc_string_init_uint1);
+	cu_tests_addTest(tests, testfunc_string_parse_int);
+
 	 
 
 	cu_tests_test(tests);
@@ -364,3 +367,31 @@ Status testfunc_string_init_uint1(CUTests t){
 	 return SUCCESS;
 }
 
+Status testfunc_string_parse_int(CUTests t){
+	int testData[] = {12345678, -12345678, 1653, -12351, -246981, 404, 17735871, 983275, 19835, 783971, 2387, -6655};
+	int testDataLength = sizeof(testData) / sizeof(int);
+	
+
+	for(int i = 0; i < testDataLength; i++){
+		CUString s = cu_string_init_int(testData[i]);
+
+		int *a = cu_string_parse_int(s);
+		if(a == NULL){
+			cu_tests_log_cstr(t, "testfunc_string_parse_int: a == NULL");
+			return FAILURE;
+		}
+
+		if(*a != testData[i]){
+			cu_tests_log_cstr(t, "testfunc_string_parse_int: *a != testData[i]. expected = ");
+			cu_tests_log_custring(t, s);
+			cu_tests_log_cstr(t, "|got = ");
+			cu_tests_log_int(t, *a);
+			return FAILURE;
+		}
+
+
+		cu_string_destroy(&s);
+	}
+
+	return SUCCESS;
+}

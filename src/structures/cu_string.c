@@ -290,22 +290,19 @@ int* cu_string_parse_int(CUString str){
 		return NULL;
 
 	parseIntReturn = 0;
-	int digit = 0;
+	int digit = 1;
 
-	for(int i = cast(str)->length - 1; i > 0 ; i--, digit++){
+	for(int i = cast(str)->length - 1; i > 0 ; i--, digit *= 10){
 		char c = cast(str)->data[i];
 			if(isdigit(c))
-				if(digit != 0)
-					parseIntReturn += (c - '0') * (digit * 10);
-				else
-					parseIntReturn += (c - '0');
+				parseIntReturn += (c - '0') * digit;
 			else
 				return NULL;
 	}
 	if(cast(str)->data[0] == '-')
 		parseIntReturn *= -1;
 	else
-		parseIntReturn += (cast(str)->data[0] - '0') * (digit * 10);
+		parseIntReturn += (cast(str)->data[0] - '0') * digit;
 
 
 	return &parseIntReturn;
