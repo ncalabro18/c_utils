@@ -45,7 +45,7 @@ Status testfunc_arraylist1(CUTests t){
 		}
 	}
 	
-	if(cu_arraylist_size(list) != count){
+	if(cu_arraylist_length(list) != count){
 	 	cu_tests_log_cstr(t, "arraylist1: size != cout");      
 		return FAILURE;
 	}
@@ -86,7 +86,7 @@ Status testfunc_arraylist2(CUTests t){
 	}
 
 	for(int i = 0; i < str_len; i++){
-		char *c = cu_arraylist_get(list, i);
+		char *c = (char*) cu_arraylist_get(list, i);
 		if(c == FAILURE){
 			cu_tests_log_cstr(t, "arraylist2: cu_arraylist_get NULL return");
 			return FAILURE;

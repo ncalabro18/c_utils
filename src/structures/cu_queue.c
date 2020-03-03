@@ -76,7 +76,7 @@ Status cu_queue_pop(CUQueue q){
 }
 
 
-int cu_queue_size(CUQueue q){
+int cu_queue_length(CUQueue q){
 	if(!q) return -1;
 
 	return cast(q)->itemCount;

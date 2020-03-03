@@ -39,7 +39,7 @@ Status cu_arraylist_clear(CUArrayList list);
 Boolean cu_arraylist_isEmpty(CUArrayList list);
 
 //returns the length of the CUArrayList
-int cu_arraylist_size(CUArrayList list);
+int cu_arraylist_length(CUArrayList list);
 
 //returns the address of the block of data which holds all the elements
 //returning type should be a pointer to the stored type

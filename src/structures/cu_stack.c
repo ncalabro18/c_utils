@@ -29,7 +29,7 @@ Status cu_stack_pop(CUStack stack) {
 	if(stack == NULL || cu_arraylist_isEmpty(cast(stack)->list))
 		return FAILURE;
 	
-	int index = cu_arraylist_size(cast(stack)->list) - 1;
+	int index = cu_arraylist_length(cast(stack)->list) - 1;
 	
 	if(index < 0)
 		return FAILURE;
@@ -51,7 +51,7 @@ Status cu_stack_push(CUStack stack, byte *item) {
 byte* cu_stack_peek(CUStack stack) {
 	if (stack == NULL)
 		return NULL;
-	int index = cu_arraylist_size(cast(stack)->list) - 1;
+	int index = cu_arraylist_length(cast(stack)->list) - 1;
 
 	if (index < 0)
 		return NULL;
@@ -67,10 +67,10 @@ Status cu_stack_clear(CUStack stack) {
 }
 
 
-int cu_stack_size(CUStack stack) {
+int cu_stack_length(CUStack stack) {
 	if (stack == NULL)
 		return -3;
-	return cu_arraylist_size(cast(stack)->list);
+	return cu_arraylist_length(cast(stack)->list);
 }
 
 

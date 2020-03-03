@@ -64,7 +64,7 @@ Status cu_arraylist_prepend(CUArrayList list, const byte* data) {
 
 
 Status cu_arraylist_append(CUArrayList list, const byte* data) {
-	return cu_arraylist_set(list, data, cu_arraylist_size(list));
+	return cu_arraylist_set(list, data, cu_arraylist_length(list));
 }
 
 int al_search(CUArrayList l, const byte* data) {
@@ -154,7 +154,7 @@ Boolean cu_arraylist_isEmpty(CUArrayList list) {
 }
 
 
-int cu_arraylist_size(CUArrayList list) {
+int cu_arraylist_length(CUArrayList list) {
 	if (list == NULL)
 		return -1;
 

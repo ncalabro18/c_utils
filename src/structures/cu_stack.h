@@ -28,7 +28,7 @@ Status cu_stack_clear(CUStack stack);
 
 
 //returns the number of items stored in the stack
-int cu_stack_size(CUStack stack);
+int cu_stack_length(CUStack stack);
 
 
 //returns whether or not the stack is empty

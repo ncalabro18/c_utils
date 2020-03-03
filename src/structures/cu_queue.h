@@ -11,7 +11,7 @@ Status cu_queue_push(CUQueue q, byte* data);
 byte*  cu_queue_peek(CUQueue q);
 Status cu_queue_pop(CUQueue q);
 
-int cu_queue_size(CUQueue q);
+int cu_queue_length(CUQueue q);
 
 Status cu_queue_clear(CUQueue q);
 

@@ -84,7 +84,7 @@ Status cu_tests_test(CUTests t){
 		return FAILURE;
 	}
 
-	int funcCount = cu_arraylist_size(ut->functions);
+	int funcCount = cu_arraylist_length(ut->functions);
 	if(funcCount <= 0){
 		perror("No functions found.\n");
 		return FAILURE;
