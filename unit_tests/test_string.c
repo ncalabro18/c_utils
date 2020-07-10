@@ -323,7 +323,7 @@ Status testfunc_string_init_int2(CUTests t){
 	return SUCCESS;
 }
 
-Status testfunc_string_init_uint_helper1(CUTests t, unsigned int test, const char *compareTo){
+Status testfunc_string_init_uint_helper1(CUTests t, int test, char *compareTo){
 	if(!t || !compareTo) return FAILURE;
 	CUString str_test = cu_string_init_int(test);
 	if(str_test == NULL){
@@ -345,24 +345,34 @@ Status testfunc_string_init_uint_helper1(CUTests t, unsigned int test, const cha
 	return SUCCESS;
 }
 
+struct init_uint1{
+	int a;
+	char *b;
+};
 
 Status testfunc_string_init_uint1(CUTests t){
 
-	 if(testfunc_string_init_uint_helper1(t, 4, "4") == FAILURE) return FAILURE;
-	 if(testfunc_string_init_uint_helper1(t, 7, "7") == FAILURE) return FAILURE;
-	 if(testfunc_string_init_uint_helper1(t, 671294, "671294") == FAILURE) return FAILURE;
-	 if(testfunc_string_init_uint_helper1(t, 97562, "97562") == FAILURE) return FAILURE;
-	 if(testfunc_string_init_uint_helper1(t, 12345678, "12345678") == FAILURE) return FAILURE;
-	 if(testfunc_string_init_uint_helper1(t, 1, "1") == FAILURE) return FAILURE;
-	 if(testfunc_string_init_uint_helper1(t, 0, "0") == FAILURE) return FAILURE;
-	 if(testfunc_string_init_uint_helper1(t, 9911552, "9911552") == FAILURE) return FAILURE;
-	 if(testfunc_string_init_uint_helper1(t, 771, "771") == FAILURE) return FAILURE;
-	 if(testfunc_string_init_uint_helper1(t, 2761, "2761") == FAILURE) return FAILURE;
-	 if(testfunc_string_init_uint_helper1(t, 771, "771") == FAILURE) return FAILURE;
-	 if(testfunc_string_init_uint_helper1(t, 1271271, "1271271") == FAILURE) return FAILURE;
-	 if(testfunc_string_init_uint_helper1(t, 237661, "237661") == FAILURE) return FAILURE;
-	 if(testfunc_string_init_uint_helper1(t, 72661, "72661") == FAILURE) return FAILURE;
-	 if(testfunc_string_init_uint_helper1(t, 621251244, "621251244") == FAILURE) return FAILURE;
+	struct init_uint1 testData[] = {
+		{4, "4"},
+		{7, "7"},
+		{671294, "671294"},
+		{97562, "97562"},
+		{12345678, "12345678"},
+		{1, "1"},
+		{0, "0"},
+		{9911552, "9911552"},
+		{771, "771"},
+		{2761, "2761"},
+		{771, "771"},
+		{1271271, "1271271"},
+		{237661, "237661"},
+		{72661, "72661"},
+		{621251244, "621251244"},
+	};
+
+	int len = sizeof(testData) / sizeof(struct init_uint1);
+	for(int i = 0; i < len; i++)
+		testfunc_string_init_uint_helper1(t, testData[i].a, testData[i].b);
 
 	 return SUCCESS;
 }

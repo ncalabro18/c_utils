@@ -1,5 +1,5 @@
 CC = gcc
-FLAGS = -Wall -g -lm -Wno-unused-function
+FLAGS = -Wall -lm -Wno-unused-function
 OBJECTS = cu_utils.o cu_arraylist.o cu_string.o cu_queue.o cu_stack.o cu_tests.o cu_heap.o cu_hashmap.o
 LIB = libcu_utils.a
 
